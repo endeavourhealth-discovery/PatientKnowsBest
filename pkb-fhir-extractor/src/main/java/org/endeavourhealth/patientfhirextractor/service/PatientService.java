@@ -174,8 +174,8 @@ public class PatientService {
             session.createSQLQuery("call " + dbReferences + ".initialiseTablesPKB()").executeUpdate();
 
             session.createSQLQuery("call " + dbReferences + ".createCohortforPKB()").executeUpdate();
-            session.createSQLQuery("call " + dbReferences + ".extractsPatientsForPKB()").executeUpdate();
-            session.createSQLQuery("call " + dbReferences + ".extractsDeletionsForPKB()").executeUpdate();
+            session.createSQLQuery("call " + dbReferences + ".extractPatientsForPKB()").executeUpdate();
+            session.createSQLQuery("call " + dbReferences + ".extractDeletionsForPKB()").executeUpdate();
             session.createSQLQuery("call " + dbReferences + ".finaliseExtractForPKB()").executeUpdate();
             txn.commit();
 
