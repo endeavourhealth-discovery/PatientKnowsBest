@@ -173,8 +173,8 @@ public class PatientService {
             session.createSQLQuery("call pkb_extracts.initialiseTablesPKB()").executeUpdate();
 
             session.createSQLQuery("call pkb_extracts.createCohortforPKB()").executeUpdate();
-            session.createSQLQuery("call pkb_extracts.extractsPatientsForPKB()").executeUpdate();
-            session.createSQLQuery("call pkb_extracts.extractsDeletionsForPKB()").executeUpdate();
+            session.createSQLQuery("call pkb_extracts.extractPatientsForPKB()").executeUpdate();
+            session.createSQLQuery("call pkb_extracts.extractDeletionsForPKB()").executeUpdate();
             session.createSQLQuery("call pkb_extracts.finaliseExtractForPKB()").executeUpdate();
             txn.commit();
 
