@@ -45,7 +45,7 @@ public class ReferencesService {
             session.close();
         } catch (Exception e) {
             logger.error("Problem while inserting to reference table for anid " + referencesEntity.getAn_id());
-            logger.info("ENd of enterReference() method");
+            logger.info("End of enterReference() method");
             return false;
         }
         logger.info("End of enterReference() method");
