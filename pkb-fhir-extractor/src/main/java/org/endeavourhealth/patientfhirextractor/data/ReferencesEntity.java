@@ -19,6 +19,12 @@ public class ReferencesEntity {
         this.location = location;
     }
 
+    public ReferencesEntity(String resource, long an_id, String location){
+        this.resource = resource;
+        this.an_id = an_id;
+        this.location = location;
+    }
+
     @Id
     private long an_id;
     private String strid;

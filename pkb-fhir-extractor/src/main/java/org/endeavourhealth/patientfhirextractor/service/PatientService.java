@@ -184,12 +184,13 @@ public class PatientService {
 
             session = entityManagerFactory.unwrap(SessionFactory.class).openSession();
             Transaction txn = session.beginTransaction();
-            session.createSQLQuery("call " + dbReferences + ".initialiseTablesPKB()").executeUpdate();
 
+            session.createSQLQuery("call " + dbReferences + ".initialiseTablesPKB()").executeUpdate();
             session.createSQLQuery("call " + dbReferences + ".createCohortforPKB()").executeUpdate();
             session.createSQLQuery("call " + dbReferences + ".extractPatientsForPKB()").executeUpdate();
             session.createSQLQuery("call " + dbReferences + ".extractDeletionsForPKB()").executeUpdate();
             session.createSQLQuery("call " + dbReferences + ".finaliseExtractForPKB()").executeUpdate();
+
             txn.commit();
             logger.info("End of executeProcedures() method");
         } catch (Exception ex) {

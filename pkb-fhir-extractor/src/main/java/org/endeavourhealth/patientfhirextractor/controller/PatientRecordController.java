@@ -119,6 +119,8 @@ public class PatientRecordController {
 
         if (!organizationExist) {
             //TODO: POST organizaton
+            String url = "http://localhost:8080/fhir/STU3/Organization";
+            patientService.referenceEntry(new ReferencesEntity(AvailableResources.ORGANIZATION.toString(), organizationId, url));
         }
         //TODO: Add newly organization to reference table
         logger.info("End of postOrganizationIfNeeded() method");

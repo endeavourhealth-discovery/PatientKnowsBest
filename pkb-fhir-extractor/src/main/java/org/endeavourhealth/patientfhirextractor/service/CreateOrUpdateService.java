@@ -28,7 +28,6 @@ public class CreateOrUpdateService {
                 } else {
                     //TODO: PUT
                 }*/
-        logger.info("End of createOrUpdatePatient() method");
         return CompletableFuture.completedFuture(resp.getId().toString());
     }
 
