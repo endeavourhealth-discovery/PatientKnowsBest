@@ -22,6 +22,7 @@ public class ReferencesService {
     private ExporterProperties exporterProperties;
 
     public boolean enterReference(ReferencesEntity referencesEntity, EntityManagerFactory entityManagerFactory) {
+        logger.info("Entering enterReference() method");
         String sql = "insert into " + exporterProperties.getDbreferences() + ".references (an_id,strid,resource,response,location,datesent,json,patient_id,type_id,runguid) values (?,?,?,?,?,?,?,?,?,?)";
         Session session = entityManagerFactory.unwrap(SessionFactory.class).openSession();
         Transaction transaction = session.beginTransaction();
@@ -44,9 +45,10 @@ public class ReferencesService {
             session.close();
         } catch (Exception e) {
             logger.error("Problem while inserting to reference table for anid " + referencesEntity.getAn_id());
+            logger.info("ENd of enterReference() method");
             return false;
         }
-
+        logger.info("End of enterReference() method");
         return true;
     }
 }

@@ -18,7 +18,6 @@ public class CreateOrUpdateService {
 
     @Async
     public CompletableFuture<String> createOrUpdatePatient(Patient patientResource) {
-        System.out.println(patientResource.getName() + " " + patientResource.getAddress());
         //Testing
         // Create a client and post the transaction to the server
         IGenericClient client = ctx.newRestfulGenericClient("http://hapi.fhir.org/baseDstu3");

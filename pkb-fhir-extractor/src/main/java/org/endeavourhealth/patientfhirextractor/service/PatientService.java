@@ -36,15 +36,18 @@ public class PatientService {
     private EntityManagerFactory entityManagerFactory;
 
     public Map<Long, PatientEntity> processPatients() {
+        logger.info("Entering processPatients() method");
         List<String> patientIds = getPatientIds();
         Map<Long, PatientEntity> patientEntities = null;
         if (patientIds.size() > 0) {
             patientEntities = getPatientFull(patientIds);
         }
+        logger.info("End of publishPatients() method");
         return patientEntities;
     }
 
     private List<String> getPatientIds() {
+        logger.info("Entering getPatientIds() method");
         String sql;
         String dbSchema = exporterProperties.getDbschema();
         String dbReference = exporterProperties.getDbreferences();
@@ -59,13 +62,15 @@ public class PatientService {
             patientIds = session.createSQLQuery(sql).list();
             session.close();
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            e.printStackTrace();
+            logger.error("", e.getCause());
         }
-
+        logger.info("End of getPatientIds() method");
         return patientIds;
     }
 
     private Map<Long, PatientEntity> getPatientFull(List patientIds) {
+        logger.info("Entering getPatientFull() method");
         String dbSchema = exporterProperties.getDbschema();
         Map<Long, PatientEntity> patientMap = new HashMap<>();
 
@@ -108,11 +113,12 @@ public class PatientService {
             patientMap.put(patient.getId(), patient);
         });
         session.close();
-
+        logger.info("End of  getPatientFull() method");
         return patientMap;
     }
 
     public String getLocationForResource(Long id, AvailableResources resourceName) {
+        logger.info("Entering getLocationForResource() method");
         ReferencesEntity referencesEntity = new ReferencesEntity();
         Session session = null;
         Session session2 = null;
@@ -131,8 +137,9 @@ public class PatientService {
                 q2.getSingleResult();
             }
         } catch (NoResultException e) {
-            System.out.println(e.getMessage());
+            logger.info("No result for id " + id);
             //resource not deleted
+            logger.info("End of getLocationForResource() method");
             return referencesEntity.getLocation();
         } finally {
             if (session != null) {
@@ -142,11 +149,13 @@ public class PatientService {
                 session2.close();
             }
         }
+        logger.info("End of getLocationForResource() method");
         //Location does not exist or it is deleted
         return "";
     }
 
     public boolean resourceExist(Long id, AvailableResources resourceName) {
+        logger.info("Entering resourceExist() method");
         Session session = null;
         try {
             String sql = "SELECT * FROM " + exporterProperties.getDbreferences() + ".references WHERE an_id=:id AND resource=:resource";
@@ -155,9 +164,12 @@ public class PatientService {
             q.setParameter("id", id);
             q.setParameter("resource", resourceName.toString());
             q.getSingleResult();
+            logger.info("End of getLocationForResource() method");
             return true;
         } catch (NoResultException e) {
-            System.out.println(e.getMessage());
+            e.printStackTrace();
+            logger.error("No result for id " + id + " resource name " + resourceName);
+            logger.info("End of getLocationForResource() method");
             return false;
         } finally {
             session.close();
@@ -165,6 +177,7 @@ public class PatientService {
     }
 
     public void executeProcedures() {
+        logger.info("Entering executeProcedures() method");
         Session session = null;
         String dbReferences = exporterProperties.getDbreferences();
         try {
@@ -178,7 +191,7 @@ public class PatientService {
             session.createSQLQuery("call " + dbReferences + ".extractDeletionsForPKB()").executeUpdate();
             session.createSQLQuery("call " + dbReferences + ".finaliseExtractForPKB()").executeUpdate();
             txn.commit();
-
+            logger.info("End of executeProcedures() method");
         } catch (Exception ex) {
             logger.error("", ex.getCause());
         } finally {
@@ -188,6 +201,7 @@ public class PatientService {
 
 
     public boolean isPatientActive(Long patientId) {
+        logger.info("Entering isPatientActive() method");
         try {
             String sql = "SELECT patientId FROM " + exporterProperties.getDbreferences() + ".subscriber_cohort WHERE patientId=:id and needsDelete=0";
             Session session = entityManagerFactory.unwrap(SessionFactory.class).openSession();
@@ -195,14 +209,16 @@ public class PatientService {
             q.setParameter("id", patientId);
             q.getSingleResult();
             session.close();
+            logger.info("End of isPatientActive() method");
             return true;
         } catch (NoResultException e) {
-            System.out.println(e.getMessage());
+            logger.info("No result for id " + patientId);
             return false;
         }
     }
 
     public boolean referenceEntry(ReferencesEntity referencesEntity) {
+        logger.info("Entering referenceEntry() method");
         try {
             referencesService.enterReference(referencesEntity, entityManagerFactory);
         } catch (Exception e) {
@@ -212,16 +228,19 @@ public class PatientService {
         if (referencesEntity.getAn_id() > 0) {
             deleteProcessedPatientId(referencesEntity.getAn_id());
         }
+        logger.info("End of referenceEntry() method");
         return true;
     }
 
     public void deleteProcessedPatientId(Long patientId) {
+        logger.info("Entering deleteProcessedPatientId() method");
         Session session = null;
         try {
             String sql = "delete from pkbpatients where id = :id";
             session = entityManagerFactory.unwrap(SessionFactory.class).openSession();
             Query q = session.createSQLQuery(sql).addEntity(ReferencesEntity.class);
             q.setParameter("id", patientId);
+            logger.info("End of deleteProcessedPatientId() method");
         } catch (Exception ex) {
             logger.error("", ex.getCause());
         } finally {
