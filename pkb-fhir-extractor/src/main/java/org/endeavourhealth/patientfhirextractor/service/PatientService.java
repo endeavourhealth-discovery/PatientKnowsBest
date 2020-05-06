@@ -52,18 +52,20 @@ public class PatientService {
         String dbSchema = exporterProperties.getDbschema();
         String dbReference = exporterProperties.getDbreferences();
         List<String> patientIds = null;
+        Session session = null;
         try {
             if (StringUtils.isNotEmpty(exporterProperties.getOrganization())) {
                 sql = "SELECT p.id FROM " + dbReference + ".pkbpatients pk join " + dbSchema + ".patient p on p.id = pk.id where p.organization_id=" + exporterProperties.getOrganization();
             } else {
                 sql = "select * from " + dbReference + ".pkbpatients";
             }
-            Session session = entityManagerFactory.unwrap(SessionFactory.class).openSession();
+            session = entityManagerFactory.unwrap(SessionFactory.class).openSession();
             patientIds = session.createSQLQuery(sql).list();
-            session.close();
         } catch (Exception e) {
             e.printStackTrace();
             logger.error("", e.getCause());
+        } finally {
+            session.close();
         }
         logger.info("End of getPatientIds() method");
         return patientIds;
@@ -203,18 +205,20 @@ public class PatientService {
 
     public boolean isPatientActive(Long patientId) {
         logger.info("Entering isPatientActive() method");
+        Session session = null;
         try {
             String sql = "SELECT patientId FROM " + exporterProperties.getDbreferences() + ".subscriber_cohort WHERE patientId=:id and needsDelete=0";
-            Session session = entityManagerFactory.unwrap(SessionFactory.class).openSession();
+            session = entityManagerFactory.unwrap(SessionFactory.class).openSession();
             Query q = session.createSQLQuery(sql);
             q.setParameter("id", patientId);
             q.getSingleResult();
-            session.close();
             logger.info("End of isPatientActive() method");
             return true;
         } catch (NoResultException e) {
             logger.info("No result for id " + patientId);
             return false;
+        } finally {
+           session.close();
         }
     }
 

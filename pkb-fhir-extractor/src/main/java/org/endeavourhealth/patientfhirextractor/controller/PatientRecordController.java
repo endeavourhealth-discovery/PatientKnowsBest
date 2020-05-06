@@ -56,7 +56,7 @@ public class PatientRecordController {
 
     public void processPatientData() throws Exception {
         logger.info("Entering getUserDetails() method");
-        Map<Long, String> orgIdList = new HashMap<>();
+        Map<String, String> orgIdList = new HashMap<>();
         Map<Long, PatientEntity> patientEntities = patientService.processPatients();
         Long globalOrgId = StringUtils.isNotEmpty(exporterProperties.getOrganization()) ? Long.parseLong(exporterProperties.getOrganization()) : null;
         if (CollectionUtils.isEmpty(patientEntities)) {
@@ -74,7 +74,7 @@ public class PatientRecordController {
                 logger.info("Organization location empty " + orgLocation);
                 return;
             } else {
-                orgIdList.put(globalOrgId, orgLocation);
+                orgIdList.put(String.valueOf(globalOrgId), orgLocation);
             }
         }
 

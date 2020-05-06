@@ -42,11 +42,12 @@ public class ReferencesService {
                     .setParameter(10, exporterProperties.getRunguid())
                     .executeUpdate();
             transaction.commit();
-            session.close();
         } catch (Exception e) {
             logger.error("Problem while inserting to reference table for anid " + referencesEntity.getAn_id());
             logger.info("End of enterReference() method");
             return false;
+        } finally {
+                session.close();
         }
         logger.info("End of enterReference() method");
         return true;
