@@ -7,8 +7,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+import org.springframework.scheduling.TaskScheduler;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 
 @SpringBootApplication
+@EnableScheduling
 public class PatientFhirExtractorApplication implements CommandLineRunner {
 
     @Autowired
@@ -24,6 +29,11 @@ public class PatientFhirExtractorApplication implements CommandLineRunner {
         SpringApplication.run(PatientFhirExtractorApplication.class, args);
     }
 
+    @Bean
+    TaskScheduler threadPoolTaskScheduler() {
+        return new ThreadPoolTaskScheduler();
+    }
+
     @Override
     public void run(String... strings) throws Exception {
         if (exporterProperties.getProcrun() > 0) {
@@ -31,7 +41,6 @@ public class PatientFhirExtractorApplication implements CommandLineRunner {
                 patientService.executeProcedures();
             }
         }
-        patientRecordController.publishPatients();
     }
 
 }
