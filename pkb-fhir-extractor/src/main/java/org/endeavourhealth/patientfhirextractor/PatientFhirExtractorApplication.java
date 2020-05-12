@@ -27,11 +27,6 @@ public class PatientFhirExtractorApplication implements CommandLineRunner {
         SpringApplication.run(PatientFhirExtractorApplication.class, args);
     }
 
-    @Bean
-    TaskScheduler threadPoolTaskScheduler() {
-        return new ThreadPoolTaskScheduler();
-    }
-
     @Override
     public void run(String... strings) throws Exception {
         patientService.executeProcedures();
