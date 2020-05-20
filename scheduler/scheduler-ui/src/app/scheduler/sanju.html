@@ -1,0 +1,21 @@
+<form [formGroup]='sanju1'>
+    
+    <h1>{{sanju1.value | json }}</h1>
+    <!-- <input type = text > -->
+    <label for='name' >Name : </label><input  class="form-control" type = 'text' formControlName = 'name' id = 'name '><br><br/>
+
+
+    <label for='age' >age : </label><input class="form-control" type = 'text' formControlName = 'age' id = 'age'><br><br/>
+
+    <label for='sex' >Sex : </label><input class="form-control" type = 'text' formControlName = 'sex' id = 'sex'><br><br/>
+
+    <input type="button" 
+    name="submit" 
+    id="submit" 
+    class="btn btn-primary"  
+    value="Submit"/>
+    
+
+
+
+</form>
