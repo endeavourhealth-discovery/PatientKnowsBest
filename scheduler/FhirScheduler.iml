@@ -85,7 +85,7 @@
     <orderEntry type="module-library">
       <library name="Maven: Pkb:Pkb:1.2">
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../../Pkb_project.jar!/" />
+          <root url="jar://$USER_HOME$/Fhir_Scheduler/Pkb_project.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
