@@ -1,10 +1,12 @@
 package com.fhir.scheduler.service;
 
+import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 import com.fhir.scheduler.entity.Available_jobs;
+import com.fhir.scheduler.entity.History;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 
 public interface JobService {
@@ -29,4 +31,6 @@ public interface JobService {
 	boolean checkJobDetailsExists(String jobName);
 
 	String getJobType(String jobName);
+	boolean checkValidDate(Date date) throws ParseException;
+	List<History> getLog();
 }

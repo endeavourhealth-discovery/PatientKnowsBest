@@ -17,6 +17,8 @@
 -- drop table if exists scheduler_triggers;
 -- drop table if exists scheduler_job_details;
 -- drop table if exists scheduler_calendars;
+-- drop table if exists available_jobs;
+-- drop table if exists history;
 --
 -- create table scheduler_job_details
 --   (
@@ -184,15 +186,16 @@
 -- create index idx_scheduler_ft_t_g on scheduler_fired_triggers(sched_name,trigger_name,trigger_group);
 -- create index idx_scheduler_ft_tg on scheduler_fired_triggers(sched_name,trigger_group);
 --
--- create  table fhir_Scheduler.available_jobs (job_name varchar (30) primary key,start_url varchar (500),status boolean,stop_url varchar (500),class_path varchar(500),start_method varchar(100),stop_method varchar(100));
+
+-- create  table fhir_Scheduler.available_jobs (job_name varchar (30) primary key,start_url varchar (500),status boolean,stop_url varchar (500),class_path varchar(500),start_method varchar(100),stop_method varchar(100),parameters varchar(1000));
 --
--- insert into fhir_Scheduler.available_jobs  values('PkbJob',null,false,null,'com.company.Pkb_Simulator','doExtracts','setContinueFlag');
--- insert into fhir_Scheduler.available_jobs  values('KD',null,false,null,null,null,null);
--- insert into fhir_Scheduler.available_jobs  values('PkJob2',null,false,null,null,null,null);
--- insert into fhir_Scheduler.available_jobs  values('PkJob1',null,false,null,null,null,null);
+-- insert into fhir_Scheduler.available_jobs  values('PkbJob',null,false,null,'com.company.Pkb_Simulator','doExtracts','setContinueFlag','pkbExtractor,FhirSchduler');
+-- insert into fhir_Scheduler.available_jobs  values('KD',null,false,null,null,null,null,null);
+-- insert into fhir_Scheduler.available_jobs  values('PkJob2',null,false,null,null,null,null,null);
+-- insert into fhir_Scheduler.available_jobs  values('PkJob1',null,false,null,null,null,null,null);
 --
 --
---
+--create table history (id int primary key auto_increment,job_name varchar(100) NOT NULL , status varchar(100) NOT NULL, information varchar(250) , job_start_time datetime , job_complete_time datetime);
 --
 --
 -- commit;

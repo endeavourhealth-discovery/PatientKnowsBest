@@ -19,5 +19,7 @@ public class ServerResponseCode {
 	//SUCCESS CODES
 	public static final int SUCCESS = 200;
 
+	public static final int TIME_ERROR = 503;
+
 
 }

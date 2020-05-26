@@ -3,3 +3,7 @@
     color: rgb(220, 238, 253);
     width: 200px;
   }
+
+.ng-touched .ng-invalid{
+  border: solid 2px #d91d1d;
+}

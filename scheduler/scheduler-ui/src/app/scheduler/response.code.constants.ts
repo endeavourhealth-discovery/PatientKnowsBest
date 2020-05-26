@@ -23,4 +23,6 @@ export class ServerResponseCode {
 
 	//SUCCESS CODES
 	static SUCCESS = 200;
+
+	static TIME_ERROR = 503;
 }

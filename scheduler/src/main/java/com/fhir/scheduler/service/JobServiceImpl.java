@@ -1,22 +1,19 @@
 package com.fhir.scheduler.service;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
 import com.fhir.scheduler.entity.Available_jobs;
+import com.fhir.scheduler.entity.History;
+import com.fhir.scheduler.repo.History_repo;
 import com.fhir.scheduler.repo.Jobs_repo;
-import org.quartz.JobDetail;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobKey;
-import org.quartz.Scheduler;
-import org.quartz.SchedulerException;
-import org.quartz.SimpleTrigger;
-import org.quartz.Trigger;
+import org.quartz.*;
 import org.quartz.Trigger.TriggerState;
-import org.quartz.TriggerKey;
 import org.quartz.impl.matchers.GroupMatcher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -45,6 +42,9 @@ public class JobServiceImpl implements JobService {
     @Autowired
     private Jobs_repo jobs_repo;
 
+    @Autowired
+    private History_repo history_repo;
+
     /**
      * Schedule a job by jobName at given date.
      */
@@ -59,7 +59,7 @@ public class JobServiceImpl implements JobService {
         JobDetail jobDetail = JobUtil.createJob(jobClass, false, context, jobKey, groupKey,jobType);
 
         System.out.println("creating trigger for key :" + jobKey + " at date :" + date);
-        Trigger cronTriggerBean = JobUtil.createSingleTrigger(triggerKey, date, SimpleTrigger.MISFIRE_INSTRUCTION_FIRE_NOW);
+        Trigger cronTriggerBean = JobUtil.createSingleTrigger(triggerKey, date, SimpleTrigger.MISFIRE_INSTRUCTION_RESCHEDULE_NEXT_WITH_REMAINING_COUNT);
         //Trigger cronTriggerBean = JobUtil.createSingleTrigger(triggerKey, date, SimpleTrigger.MISFIRE_INSTRUCTION_RESCHEDULE_NEXT_WITH_REMAINING_COUNT);
 
         try {
@@ -93,7 +93,7 @@ public class JobServiceImpl implements JobService {
         JobDetail jobDetail = JobUtil.createJob(jobClass, false, context, jobKey, groupKey,jobType);
 
         System.out.println("creating trigger for key :" + jobKey + " at date :" + date);
-        Trigger cronTriggerBean = JobUtil.createCronTrigger(triggerKey, date, cronExpression, SimpleTrigger.MISFIRE_INSTRUCTION_FIRE_NOW);
+        Trigger cronTriggerBean = JobUtil.createCronTrigger(triggerKey, date, cronExpression, CronTrigger.MISFIRE_INSTRUCTION_DO_NOTHING);
 
         try {
             Scheduler scheduler = schedulerFactoryBean.getScheduler();
@@ -121,7 +121,7 @@ public class JobServiceImpl implements JobService {
         System.out.println("Parameters received for updating one time job : jobKey :" + jobKey + ", date: " + date);
         try {
             //Trigger newTrigger = JobUtil.createSingleTrigger(jobKey, date, SimpleTrigger.MISFIRE_INSTRUCTION_RESCHEDULE_NEXT_WITH_REMAINING_COUNT);
-            Trigger newTrigger = JobUtil.createSingleTrigger(jobKey, date, SimpleTrigger.MISFIRE_INSTRUCTION_FIRE_NOW);
+            Trigger newTrigger = JobUtil.createSingleTrigger(jobKey, date, SimpleTrigger.MISFIRE_INSTRUCTION_RESCHEDULE_NEXT_WITH_REMAINING_COUNT);
 
             Date dt = schedulerFactoryBean.getScheduler().rescheduleJob(TriggerKey.triggerKey(jobKey), newTrigger);
             System.out.println("Trigger associated with jobKey :" + jobKey + " rescheduled successfully for date :" + dt);
@@ -145,7 +145,7 @@ public class JobServiceImpl implements JobService {
         System.out.println("Parameters received for updating cron job : jobKey :" + jobKey + ", date: " + date);
         try {
             //Trigger newTrigger = JobUtil.createSingleTrigger(jobKey, date, SimpleTrigger.MISFIRE_INSTRUCTION_RESCHEDULE_NEXT_WITH_REMAINING_COUNT);
-            Trigger newTrigger = JobUtil.createCronTrigger(jobKey, date, cronExpression, SimpleTrigger.MISFIRE_INSTRUCTION_FIRE_NOW);
+            Trigger newTrigger = JobUtil.createCronTrigger(jobKey, date, cronExpression, CronTrigger.MISFIRE_INSTRUCTION_DO_NOTHING	);
 
             Date dt = schedulerFactoryBean.getScheduler().rescheduleJob(TriggerKey.triggerKey(jobKey), newTrigger);
             System.out.println("Trigger associated with jobKey :" + jobKey + " rescheduled successfully for date :" + dt);
@@ -513,6 +513,29 @@ public class JobServiceImpl implements JobService {
             return "CLASS";
         }
 
+    }
+
+
+    @Override
+    public boolean checkValidDate(Date date) throws ParseException {
+
+        SimpleDateFormat sd = new SimpleDateFormat("yyyy/MM/dd HH:mm");
+
+        String date_ = sd.format(new Date());
+        Date curr_date = sd.parse(date_);
+
+        if (curr_date.after(date)){
+            return false;
+        }else{
+            return true;
+        }
+
+
+    }
+
+    @Override
+    public List<History> getLog() {
+        return history_repo.findAll();
     }
 }
 

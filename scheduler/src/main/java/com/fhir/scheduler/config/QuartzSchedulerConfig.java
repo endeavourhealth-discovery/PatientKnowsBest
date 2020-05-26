@@ -5,6 +5,7 @@ import java.util.Properties;
 
 import javax.sql.DataSource;
 
+import org.quartz.SchedulerListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.PropertiesFactoryBean;
 import org.springframework.context.ApplicationContext;
@@ -30,6 +31,9 @@ public class QuartzSchedulerConfig {
 
     @Autowired
     private JobsListener jobsListener;
+
+    @Autowired
+    private SchedulerListener schedulerListener;
     
     /**
      * create scheduler
@@ -45,6 +49,7 @@ public class QuartzSchedulerConfig {
         //Register listeners to get notification on Trigger misfire etc
         factory.setGlobalTriggerListeners(triggerListner);
         factory.setGlobalJobListeners(jobsListener);
+        factory.setSchedulerListeners(schedulerListener);
         
         AutowiringSpringBeanJobFactory jobFactory = new AutowiringSpringBeanJobFactory();
         jobFactory.setApplicationContext(applicationContext);
@@ -59,7 +64,8 @@ public class QuartzSchedulerConfig {
     @Bean
     public Properties quartzProperties() throws IOException {
         PropertiesFactoryBean propertiesFactoryBean = new PropertiesFactoryBean();
-        propertiesFactoryBean.setLocation(new ClassPathResource("/quartz.properties"));
+//        Changed properties file name from quartz.properties to scheduler.properties 22-05
+        propertiesFactoryBean.setLocation(new ClassPathResource("/scheduler.properties"));
         propertiesFactoryBean.afterPropertiesSet();
         return propertiesFactoryBean.getObject();
     }

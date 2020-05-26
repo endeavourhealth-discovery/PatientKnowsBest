@@ -1,5 +1,5 @@
 import { Component, OnInit,OnDestroy } from '@angular/core';
-import { FormBuilder,FormGroup } from '@angular/forms';
+import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import { Observable, Subscription ,timer}                     from 'rxjs';
 import {SchedulerService}     from './scheduler.service';
 import {ServerResponseCode}   from './response.code.constants'
@@ -55,13 +55,14 @@ jobType:boolean=true;
   ngOnInit(): void {
 
     this.schedulerForm = this._formBuilder.group({
-      jobName: '',
-      year: '',
-      month: '',
-      day: '',
-      hour: '',
-      minute: '',
-      cronExpression: '0 0/10 * 1/1 * ? *'
+      jobName:[''],
+      year: ['',[Validators.maxLength(4),Validators.minLength(4),Validators.required,Validators.pattern("^(19|20)\\d{2}$")]],
+      month: ['',[Validators.maxLength(2),Validators.minLength(1),Validators.required,Validators.pattern("^(0?[1-9]|1[012])$")]],
+      day: ['',[Validators.required,Validators.maxLength(2),Validators.minLength(1)]],
+      hour: ['',[Validators.minLength(1),Validators.maxLength(2),Validators.pattern("^([0-1]?[0-9]|2[0-3])"),Validators.required]],
+      minute: ['',[Validators.minLength(1),Validators.maxLength(2),Validators.pattern("([0-5]?\\d)"),Validators.required]],
+      cronExpression: ['0 0/10 * 1/1 * ? *',[Validators.pattern("^\\s*($|#|\\w+\\s*=|(\\?|\\*|(?:[0-5]?\\d)(?:(?:-|\/|\\,)(?:[0-5]?\\d))?(?:,(?:[0-5]?\\d)(?:(?:-|\/|\\,)(?:[0-5]?\\d))?)*)\\s+(\\?|\\*|(?:[0-5]?\\d)(?:(?:-|\/|\\,)(?:[0-5]?\\d))?(?:,(?:[0-5]?\\d)(?:(?:-|\/|\\,)(?:[0-5]?\\d))?)*)\\s+(\\?|\\*|(?:[01]?\\d|2[0-3])(?:(?:-|\/|\\,)(?:[01]?\\d|2[0-3]))?(?:,(?:[01]?\\d|2[0-3])(?:(?:-|\/|\\,)(?:[01]?\\d|2[0-3]))?)*)\\s+(\\?|\\*|(?:0?[1-9]|[12]\\d|3[01])(?:(?:-|\/|\\,)(?:0?[1-9]|[12]\\d|3[01]))?(?:,(?:0?[1-9]|[12]\\d|3[01])(?:(?:-|\/|\\,)(?:0?[1-9]|[12]\\d|3[01]))?)*)\\s+(\\?|\\*|(?:[1-9]|1[012])(?:(?:-|\/|\\,)(?:[1-9]|1[012]))?(?:L|W)?(?:,(?:[1-9]|1[012])(?:(?:-|\/|\\,)(?:[1-9]|1[012]))?(?:L|W)?)*|\\?|\\*|(?:JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC)(?:(?:-)(?:JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC))?(?:,(?:JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC)(?:(?:-)(?:JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC))?)*)\\s+(\\?|\\*|(?:[0-6])(?:(?:-|\/|\\,|#)(?:[0-6]))?(?:L)?(?:,(?:[0-6])(?:(?:-|\/|\\,|#)(?:[0-6]))?(?:L)?)*|\\?|\\*|(?:MON|TUE|WED|THU|FRI|SAT|SUN)(?:(?:-)(?:MON|TUE|WED|THU|FRI|SAT|SUN))?(?:,(?:MON|TUE|WED|THU|FRI|SAT|SUN)(?:(?:-)(?:MON|TUE|WED|THU|FRI|SAT|SUN))?)*)(|\\s)+(\\?|\\*|(?:|\\d{4})(?:(?:-|\/|\\,)(?:|\\d{4}))?(?:,(?:|\\d{4})(?:(?:-|\/|\\,)(?:|\\d{4}))?)*))$"
+      ),Validators.required]]
     });
     this.setDate();
     this.getAvailableJobs();
@@ -182,6 +183,8 @@ jobType:boolean=true;
               this._matSnackBar.open("Please select a valid Job ","Okay",{duration:2000});
             }else if (success.statusCode == ServerResponseCode.JOB_DETAILS_UNKNOWN){
               this._matSnackBar.open("Please verify the job details ","Okay",{duration:2000});
+            }else if(success.statusCode == ServerResponseCode.TIME_ERROR){
+              this._matSnackBar.open("Please Enter A Valid Time  ","Okay",{duration:2000});
             }
 
             this.isNotPause = true;
@@ -218,7 +221,7 @@ this.schedulerForm.patchValue({
 
   }
   // console.log('This is the current corn expression ' +this.schedulerForm.value.cronExpression);
-  this.resetForm();
+  // this.resetForm();
      }
 
 
@@ -239,14 +242,16 @@ this.schedulerForm.patchValue({
       this._schedulerService.updateJob(data).subscribe(
         success => {
             if(success.statusCode == ServerResponseCode.SUCCESS){
-              alert("Job updated successfully.");
+              this._matSnackBar.open("Job updated successfully.","Okay",{duration:2000});
               this.resetForm();
 
             }else if(success.statusCode == ServerResponseCode.JOB_DOESNT_EXIST){
-              alert("Job no longer exist.");
+              this._matSnackBar.open("Job no longer exist.","Okay",{duration:2000});
 
             }else if(success.statusCode == ServerResponseCode.JOB_NAME_NOT_PRESENT){
-              alert("Please provide job name.");
+              this._matSnackBar.open("Please provide job name.","Okay",{duration:2000});
+            }else if(success.statusCode==ServerResponseCode.TIME_ERROR){
+              this._matSnackBar.open("Please Enter Valid Time To Update","Okay",{duration:2000});
             }
             this.jobRecords = success.data;
             this.getAvailableJobs();
@@ -480,7 +485,9 @@ this.schedulerForm.patchValue({
           this.isNotPause = false;
     }
 
-
+    onSubmit(){
+    console.log(this.schedulerForm)
+    }
 
 
 }

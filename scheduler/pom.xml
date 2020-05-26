@@ -49,7 +49,7 @@
 			<artifactId>Pkb</artifactId>
 			<version>1.2</version>
 			<scope>system</scope>
-          <systemPath>C:/Users/prash/Fhir_Scheduler/Pkb_project.jar</systemPath>
+          <systemPath>C:/Users/prash/Important/Pkb_project/out/artifacts/Pkb_project_jar/Pkb_project.jar</systemPath>
 		</dependency>
 
 		<!-- Spting data jpa dependencies -->

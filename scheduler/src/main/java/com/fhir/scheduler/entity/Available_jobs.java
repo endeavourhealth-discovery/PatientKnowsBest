@@ -13,6 +13,20 @@ public class Available_jobs {
     private String start_method;
     private String stop_method;
 
+    public String getParameters() {
+        return parameters;
+    }
+
+    public void setParameters(String parameters) {
+        this.parameters = parameters;
+    }
+
+    public Boolean getStatus() {
+        return status;
+    }
+
+    private  String parameters;
+
     public String getClass_path() {
         return class_path;
     }

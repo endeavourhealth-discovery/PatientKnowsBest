@@ -32,4 +32,18 @@ export interface Job_Details{
     "stop_url": String
 }
 
+export interface Logs {
+  statusCode : Number ,
+  data :LogDetails []
+}
+
+export interface LogDetails{
+  id : Number,
+  job_name : String,
+  status : String,
+  information : String,
+  job_start_time : Date;
+  job_complete_time : Date
+}
+
 

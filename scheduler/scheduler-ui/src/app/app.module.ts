@@ -10,15 +10,19 @@ import {SchedulerService}      from  './scheduler/scheduler.service';
 import {ServerResponseCode}   from './scheduler/response.code.constants';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {MatRadioModule} from '@angular/material/radio';
-// import { SchedulerDropdownComponent } from './scheduler-dropdown/scheduler-dropdown.component'
+import {MatTableModule} from "@angular/material/table";
 import { NgxMatDatetimePickerModule, NgxMatTimepickerModule } from '@angular-material-components/datetime-picker';
 import {MatDatepickerModule} from '@angular/material/datepicker';
-import {MatSnackBarModule} from '@angular/material/snack-bar'
+import {MatSnackBarModule} from '@angular/material/snack-bar';
+import { LogtableComponent } from './logtable/logtable.component';
+import {MatButtonModule} from "@angular/material/button";
+import {MatDividerModule} from '@angular/material/divider';
 
 @NgModule({
   declarations: [
     AppComponent,
     SchedulerComponent,
+    LogtableComponent,
     // SchedulerDropdownComponent
 
   ],
@@ -33,7 +37,10 @@ import {MatSnackBarModule} from '@angular/material/snack-bar'
     NgxMatDatetimePickerModule,
     NgxMatTimepickerModule,
     MatDatepickerModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    MatTableModule,
+    MatButtonModule,
+    MatDividerModule
   ],
   providers: [SchedulerService,ServerResponseCode,MatRadioModule],
   bootstrap: [AppComponent]

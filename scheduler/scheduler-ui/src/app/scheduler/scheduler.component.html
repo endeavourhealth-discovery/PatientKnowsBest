@@ -3,46 +3,20 @@
 </nav>
 <div style="margin:20px">
 <div style="margin-bottom: 20px;">
-  <table><tr><th><label for='typeOfJob'>Please Select Type of job : </label></th> <mat-radio-group   [(ngModel)]='jobType'  (change)='resetCron()' color = 'primary'  labelPosition = 'after'>
+  <table><tr><th><label for='typeOfJob'>Please Select Type of job : </label></th> <mat-radio-group   [(ngModel)]='jobType'  (change)='resetCron()' color = 'primary'  labelPosition = 'after'  #radio='ngModel'>
         <th><mat-radio-button [value]=false  >AD-HOC JOB</mat-radio-button></th>
         <th><mat-radio-button  [value] =true   checked >NORMAL JOB</mat-radio-button></th>
     </mat-radio-group>
 </tr></table></div>
 
+        <form [formGroup]="schedulerForm"  (ngSubmit)="onSubmit()" novalidate autocomplete="off">
 
-        <form [formGroup]="schedulerForm" novalidate autocomplete="off">
-    <!-- <table>
-
-        <tr>
-            <td>Enter Job Name:</td>
-            <td>
-                <input type="text"
-                    name="jobName"
-                    id="jobName"
-                    class="form-control"
-                    formControlName="jobName"
-                    style="width:100px"
-                    required
-                    [readonly]="isEditMode"
-                  />
-            </td>
-            <td>
-                <a style="margin-left: 10px" class="btn btn-primary" (click)="getAvailableJobs()">Check Job with Name exist</a>
-            </td>
-        </tr>
-        <tr>
-            <td></td>
-            <td>
-                Status: <b><i>{{jobNameStatus}}</i></b>
-            </td>
-        </tr>
-    </table> -->
 
 
     <!-- This will be enabled in not edit mode  -->
     <table><tr><th>Please Select a job here : </th>
         <th><select  *ngIf ='!isEditMode'     style="width:200px" formControlName = 'jobName'   (change)="assignJob($event.target.value)" class="form-control" name="demo" id="#"  >
-            <option value=''>Please select Job</option>
+            <option value=''>Please Select Job</option>
         <!-- <option  selected =''></option> -->
       <option  *ngFor="let job of availableJobs; index as i" >{{job.job_name}}</option>
 
@@ -50,7 +24,7 @@
 
         </select>
 
-        <select  *ngIf ='isEditMode'  disabled   style="width:200px" class="form-control"  id="#"  >
+        <select  *ngIf ='isEditMode'  disabled   style="width:200px" class="form-control">
             <option [ngValue]='' >{{editJobName}}</option>
 </select>
     </th>
@@ -145,39 +119,47 @@
         <tr>
             <td></td>
             <td colspan="2">
-                <b>If Cron expression is blank then it will be treated as One time job</b>
+                <b>*If CronExpression is invalid job will not be scheduled </b>
             </td>
         </tr>
     </table>
+          <p style="color:#d91d1d" *ngIf = "radio.value && (schedulerForm.get('cronExpression').status =='INVALID')"><strong>*Please Enter A Valid Cron Expression </strong></p>
+          <p style="color:#d91d1d" *ngIf = "!radio.value && ((schedulerForm.get('year').status =='INVALID')||(schedulerForm.get('jobName').status =='INVALID')||(schedulerForm.get('month').status =='INVALID')||(schedulerForm.get('hour').status =='INVALID')||(schedulerForm.get('minute').status =='INVALID')||(schedulerForm.get('day').status =='INVALID')) "
+          ><strong>*Please Enter  Valid Time</strong></p>
     <table>
         <tr>
             <td style="padding: 5px;" colspan="2">
 
                 <!-- Used only in case of Adding New Job -->
-                <input type="button"
-                    name="submit"
-                    id="submit"
-                    class="btn btn-primary"
+                <button
+                  [disabled]="(schedulerForm.get('cronExpression').status =='INVALID')||(schedulerForm.get('jobName').status =='INVALID')"
+                     class="btn btn-primary"
                     (click)="scheduleJob()"
-                    *ngIf="!isEditMode"
-                    value="Submit"/>
+                     *ngIf="!isEditMode && radio.value"
+                    value="Submit">Submit</button>
+
+              <button
+                class="btn btn-primary"
+                [disabled]="(schedulerForm.get('year').status =='INVALID')||(schedulerForm.get('jobName').status =='INVALID')||(schedulerForm.get('month').status =='INVALID')||(schedulerForm.get('hour').status =='INVALID')||(schedulerForm.get('minute').status =='INVALID')||(schedulerForm.get('day').status =='INVALID')"
+                (click)="scheduleJob()"
+                *ngIf="!isEditMode && !radio.value"
+                value="Submit">Submit</button>
+
 
                 <!-- Used only in case of Edit Job -->
-                <input type="button"
-                    name="submit"
-                    id="submit"
-                    class="btn btn-primary"
+                <button
+                     class="btn btn-primary"
                     (click)="updateJob()"
                     *ngIf="isEditMode"
-                    value="Update"/>
+                        value="Update">Update</button>
 
-                <input    style="margin-left: 10px;"         type="button"
-                    name="submit"
-                    id="submit"
+                <button
+                  style="margin-left: 10px;"
                     class="btn btn-primary"
                     (click)="cancelEdit()"
                     *ngIf="isEditMode"
-                    value="Cancel"/>
+                  value="Cancel">Cancel</button>
+
             </td>
         </tr>
     </table>
@@ -185,7 +167,7 @@
 </form>
 <br/>
 
-
+  <mat-divider ></mat-divider>
 
 <div>
 
@@ -196,7 +178,7 @@
         <br/>
         2. If job is in "RUNNING" state then no action like "Pause, Resume, Delete, Edit" is allowed. </label>
     <br/><br/>
-    <label><strong>Job List:</strong></label>
+    <label><h4>Job List:</h4></label>
     <!-- <hr style="width: 100px; margin-top: 0px; margin-bottom: 0px; margin-left: 0px;color: black; border-top:5px ;"> -->
     <table class="table  table-hover" border="4" style="width : 100%;">
         <thead>
@@ -246,8 +228,12 @@
             </ng-container>
         </tbody>
     </table>
+  <mat-divider class="mt-5 mb-5"></mat-divider>
 </div>
+  <h4>History :</h4>    <logtable></logtable>
 </div>
+
+
 
 
 

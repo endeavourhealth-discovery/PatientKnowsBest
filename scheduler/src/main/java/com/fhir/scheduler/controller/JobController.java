@@ -1,10 +1,10 @@
 package com.fhir.scheduler.controller;
 
+import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import com.fhir.scheduler.job.Job;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -32,7 +32,7 @@ public class JobController {
 	@RequestMapping("schedule")	
 	public ServerResponse schedule(@RequestParam("jobName") String jobName, 
 			@RequestParam("jobScheduleTime") @DateTimeFormat(pattern = "yyyy/MM/dd HH:mm") Date jobScheduleTime, 
-			@RequestParam("cronExpression") String cronExpression){
+			@RequestParam("cronExpression") String cronExpression) throws ParseException {
 		System.out.println("JobController.schedule()");
 
 		//Job Name is mandatory
@@ -41,22 +41,27 @@ public class JobController {
 		}
 
 		//Check if job Name is unique and job details exists
+
 		if(!jobService.isJobWithNamePresent(jobName)){
        if(jobService.checkJobDetailsExists(jobName)) {
 	if (cronExpression == null || cronExpression.trim().equals("")) {
-		//Single Trigger
-		String jobType = jobService.getJobType(jobName);
-		boolean status = jobService.scheduleOneTimeJob(jobName, SimpleJob.class, jobScheduleTime,jobType);
-		if (status) {
-			return getServerResponse(ServerResponseCode.SUCCESS, jobService.getAllJobs());
-		} else {
-			return getServerResponse(ServerResponseCode.ERROR, false);
-		}
+		if(jobService.checkValidDate(jobScheduleTime)) {
+			//Single Trigger
+			String jobType = jobService.getJobType(jobName);
+			boolean status = jobService.scheduleOneTimeJob(jobName, SimpleJob.class, jobScheduleTime, jobType);
+			if (status) {
+				return getServerResponse(ServerResponseCode.SUCCESS, jobService.getAllJobs());
+			} else {
+				return getServerResponse(ServerResponseCode.ERROR, false);
+			}
 
-	} else {
+		}else{
+			return getServerResponse(ServerResponseCode.TIME_ERROR,false);
+		}
+		} else {
 		//Cron Trigger
 		String jobType = jobService.getJobType(jobName); //this gives the job type and this must be sent as paramenter to the
-		boolean status = jobService.scheduleCronJob(jobName, CronJob.class, jobScheduleTime, cronExpression,jobType);
+		boolean status = jobService.scheduleCronJob(jobName, CronJob.class,new Date(), cronExpression,jobType);
 		if (status) {
 			return getServerResponse(ServerResponseCode.SUCCESS, jobService.getAllJobs());
 		} else {
@@ -154,7 +159,7 @@ public class JobController {
 	@RequestMapping("update")
 	public ServerResponse updateJob(@RequestParam("jobName") String jobName, 
 			@RequestParam("jobScheduleTime") @DateTimeFormat(pattern = "yyyy/MM/dd HH:mm") Date jobScheduleTime, 
-			@RequestParam("cronExpression") String cronExpression){
+			@RequestParam("cronExpression") String cronExpression) throws ParseException {
 		System.out.println("JobController.updateJob()");
 
 		//Job Name is mandatory
@@ -165,18 +170,23 @@ public class JobController {
 		//Edit Job
 		if(jobService.isJobWithNamePresent(jobName)){
 			
-			if(cronExpression == null || cronExpression.trim().equals("")){
+			if(cronExpression == null || cronExpression.trim().equals("")) {
 				//Single Trigger
-				boolean status = jobService.updateOneTimeJob(jobName, jobScheduleTime);
-				if(status){
-					return getServerResponse(ServerResponseCode.SUCCESS, jobService.getAllJobs());
-				}else{
+				if (jobService.checkValidDate(jobScheduleTime)) {
+					boolean status = jobService.updateOneTimeJob(jobName, jobScheduleTime);
+					if (status) {
+						return getServerResponse(ServerResponseCode.SUCCESS, jobService.getAllJobs());
+					}
+				else {
 					return getServerResponse(ServerResponseCode.ERROR, false);
+				}
+			}else{
+					return getServerResponse(ServerResponseCode.TIME_ERROR,false);
 				}
 				
 			}else{
 				//Cron Trigger
-				boolean status = jobService.updateCronJob(jobName, jobScheduleTime, cronExpression);
+				boolean status = jobService.updateCronJob(jobName, new Date(), cronExpression);
 				if(status){
 					return getServerResponse(ServerResponseCode.SUCCESS, jobService.getAllJobs());
 				}else{
@@ -301,5 +311,12 @@ public class JobController {
 
 		return getServerResponse(ServerResponseCode.SUCCESS,jobService.getAvailableJobs());
 	}
+
+	@RequestMapping("getLogs")
+	public ServerResponse getLogs(){
+
+		return getServerResponse(ServerResponseCode.SUCCESS,jobService.getLog());
+	}
+
 
 }
