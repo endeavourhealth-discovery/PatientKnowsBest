@@ -1,0 +1,11 @@
+
+table {
+  width: 100%;
+  border: solid black 3px;
+}
+.mat-header-row .cdk-header-row{
+  border: solid black 3px;
+}
+
+
+
