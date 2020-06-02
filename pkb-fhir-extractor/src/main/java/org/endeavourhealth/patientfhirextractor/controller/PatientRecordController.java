@@ -95,7 +95,7 @@ public class PatientRecordController {
                 bundle.addEntry().setResource(messageHeader.getMessageHeader());
                 org.hl7.fhir.dstu3.model.Patient patientResource = patient.getPatientResource(patientItem, patientLocation, patientService);
                 bundle.addEntry().setResource(patientResource);
-                CompletableFuture<String> output = createOrUpdateService.createOrUpdatePatient(patientResource);
+               // CompletableFuture<String> output = createOrUpdateService.createOrUpdatePatient(patientResource);
                 //TODO:  output entry to reference table
                 FhirContext ctx = FhirContext.forDstu3();
                 String json = ctx.newJsonParser().setPrettyPrint(true).encodeResourceToString(bundle);

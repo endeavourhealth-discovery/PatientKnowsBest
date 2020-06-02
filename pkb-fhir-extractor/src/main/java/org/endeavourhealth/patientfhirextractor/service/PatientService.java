@@ -55,9 +55,9 @@ public class PatientService {
         Session session = null;
         try {
             if (StringUtils.isNotEmpty(exporterProperties.getOrganization())) {
-                sql = "SELECT p.id FROM " + dbReference + ".pkbpatients pk join " + dbSchema + ".patient p on p.id = pk.id where p.organization_id=" + exporterProperties.getOrganization();
+                sql = "SELECT p.id FROM " + dbReference + ".pkbPatients pk join " + dbSchema + ".patient p on p.id = pk.id where p.organization_id=" + exporterProperties.getOrganization();
             } else {
-                sql = "select * from " + dbReference + ".pkbpatients";
+                sql = "select * from " + dbReference + ".pkbPatients";
             }
             session = entityManagerFactory.unwrap(SessionFactory.class).openSession();
             patientIds = session.createSQLQuery(sql).list();
@@ -186,13 +186,19 @@ public class PatientService {
 
             session = entityManagerFactory.unwrap(SessionFactory.class).openSession();
             Transaction txn = session.beginTransaction();
-
             session.createSQLQuery("call " + dbReferences + ".initialiseTablesPKB()").executeUpdate();
+            txn.commit();
+            txn =  session.beginTransaction();
             session.createSQLQuery("call " + dbReferences + ".createCohortforPKB()").executeUpdate();
+            txn.commit();
+            txn =  session.beginTransaction();
             session.createSQLQuery("call " + dbReferences + ".extractPatientsForPKB()").executeUpdate();
+            txn.commit();
+            txn = session.beginTransaction();
             session.createSQLQuery("call " + dbReferences + ".extractDeletionsForPKB()").executeUpdate();
+            txn.commit();
+            txn = session.beginTransaction();
             session.createSQLQuery("call " + dbReferences + ".finaliseExtractForPKB()").executeUpdate();
-
             txn.commit();
             logger.info("End of executeProcedures() method");
         } catch (Exception ex) {
