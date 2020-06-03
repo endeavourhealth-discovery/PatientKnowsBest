@@ -26,7 +26,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 
 @RestController
 @RequestMapping("/api")
@@ -47,6 +46,15 @@ public class PatientRecordController {
 
     Patient patient;
     MessageHeader messageHeader;
+    private boolean stop;
+
+    public void setStop(Boolean stop) {
+        this.stop = stop;
+    }
+
+    public Boolean getStop() {
+        return stop;
+    }
 
     public void publishPatients() throws Exception {
         logger.info("Entering publishPatients() method");
@@ -81,25 +89,29 @@ public class PatientRecordController {
         patientService.referenceEntry(new ReferencesEntity("Start", "dum"));
         try {
             for (Map.Entry<Long, PatientEntity> patientData : patientEntities.entrySet()) {
-                PatientEntity patientItem = patientData.getValue();
-                String patientOrgId = patientItem.getOrglocation();
-                if (orgIdList.get(patientOrgId) == null) {
-                    postOrganizationIfNeeded(Long.parseLong(patientData.getValue().getOrglocation()));
+                if (!getStop()) {
+                    PatientEntity patientItem = patientData.getValue();
+                    String patientOrgId = patientItem.getOrglocation();
+                    if (orgIdList.get(patientOrgId) == null) {
+                        postOrganizationIfNeeded(Long.parseLong(patientData.getValue().getOrglocation()));
+                    }
+
+                    String patientLocation = patientService.getLocationForResource(patientItem.getId(), AvailableResources.PATIENT);
+
+                    Bundle bundle = new Bundle();
+                    bundle.setType(Bundle.BundleType.MESSAGE);
+
+                    bundle.addEntry().setResource(messageHeader.getMessageHeader());
+                    org.hl7.fhir.dstu3.model.Patient patientResource = patient.getPatientResource(patientItem, patientLocation, patientService);
+                    bundle.addEntry().setResource(patientResource);
+                    // CompletableFuture<String> output = createOrUpdateService.createOrUpdatePatient(patientResource);
+                    //TODO:  output entry to reference table
+                    FhirContext ctx = FhirContext.forDstu3();
+                    String json = ctx.newJsonParser().setPrettyPrint(true).encodeResourceToString(bundle);
+                    file.write(json);
+                } else {
+                    break;
                 }
-
-                String patientLocation = patientService.getLocationForResource(patientItem.getId(), AvailableResources.PATIENT);
-
-                Bundle bundle = new Bundle();
-                bundle.setType(Bundle.BundleType.MESSAGE);
-
-                bundle.addEntry().setResource(messageHeader.getMessageHeader());
-                org.hl7.fhir.dstu3.model.Patient patientResource = patient.getPatientResource(patientItem, patientLocation, patientService);
-                bundle.addEntry().setResource(patientResource);
-               // CompletableFuture<String> output = createOrUpdateService.createOrUpdatePatient(patientResource);
-                //TODO:  output entry to reference table
-                FhirContext ctx = FhirContext.forDstu3();
-                String json = ctx.newJsonParser().setPrettyPrint(true).encodeResourceToString(bundle);
-                file.write(json);
             }
             file.flush();
             patientService.referenceEntry(new ReferencesEntity("End", "dum"));
