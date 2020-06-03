@@ -6,9 +6,10 @@ import org.endeavourhealth.patientfhirextractor.service.PatientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 
 @SpringBootApplication
-public class PatientFhirExtractorApplication {
+public class PatientFhirExtractorApplication extends SpringBootServletInitializer {
 
     @Autowired
     ExporterProperties exporterProperties;
