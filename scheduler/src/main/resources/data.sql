@@ -1,10 +1,4 @@
--- -- thanks to patrick lightbody for submitting this...
--- --
--- -- in your quartz properties file, you'll need to set
--- -- org.quartz.jobstore.driverdelegateclass = org.quartz.impl.jdbcjobstore.postgresqldelegate
---
---
---
+
 --
 -- drop table if exists scheduler_fired_triggers;
 -- drop table if exists scheduler_paused_trigger_grps;
