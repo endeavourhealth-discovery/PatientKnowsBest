@@ -2,10 +2,6 @@ package com.fhir.scheduler.service;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 import com.fhir.scheduler.entity.Available_jobs;
