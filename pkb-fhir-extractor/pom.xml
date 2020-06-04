@@ -12,7 +12,7 @@
     <artifactId>patient-fhir-extractor</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>patient-fhir-extractor</name>
-    <packaging>war</packaging>
+    <packaging>jar</packaging>
     <description>PatientKnowsBest FHIR distribution project</description>
 
     <dependencies>
@@ -39,11 +39,6 @@
             <groupId>org.endeavourhealth.common</groupId>
             <artifactId>cache</artifactId>
             <version>1.5-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-tomcat</artifactId>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.endeavourhealth.common</groupId>
@@ -90,7 +85,6 @@
     </dependencies>
 
     <build>
-        <finalName>${project.artifactId}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
