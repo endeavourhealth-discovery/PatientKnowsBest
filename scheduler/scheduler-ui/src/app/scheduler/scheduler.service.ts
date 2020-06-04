@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import {HttpClient,HttpHeaders,HttpParams } from '@angular/common/http'
 import {map,tap}                             from 'rxjs/operators'
-import {GetJobs,Job,AvailableJobs,Logs}                        from './respose.interfaces'
+import {GetJobs, Job, AvailableJobs, Logs, ConfiguredJobs} from './respose.interfaces'
 import {Observable}                         from 'rxjs'
 
 
@@ -22,6 +22,10 @@ export class SchedulerService{
     startJobNowUrl = "http://localhost:7080/scheduler/start";
     AvailableJobs = 'http://localhost:7080/scheduler/getAvailableJobs';
     logsUrl = 'http://localhost:7080/scheduler/getLogs';
+    addHttpJobUrl = 'http://localhost:7080/scheduler/addHttpJob';
+    postClassJobUrl = 'http://localhost:7080/scheduler/addClassJob';
+    configuredJobsUrl ='http://localhost:7080/scheduler/getConfiguredJobs';
+    deleteConfiguredJobUrl = "http://localhost:7080/scheduler/deleteConfiguredJob"
 
     constructor(private _http: HttpClient) {
     }
@@ -120,4 +124,25 @@ getLogs():Observable<Logs>{
       return this._http.get<Logs>(this.logsUrl);
 }
 
+ postHttpJob(httpJob):Observable<Job>{
+
+
+      return this._http.post<Job>(this.addHttpJobUrl,httpJob)
+ }
+
+
+ postClassJob(classJob):Observable<Job>{
+   return this._http.post<Job>(this.postClassJobUrl,classJob)
+ }
+
+
+ getConfiguredJobs():Observable<ConfiguredJobs>{
+      return this._http.get<ConfiguredJobs>(this.configuredJobsUrl);
+ }
+
+ deleteConfiguredJob(jobName):Observable<ConfiguredJobs>{
+      let params = new HttpParams().append('jobName',jobName)
+
+      return this._http.delete<ConfiguredJobs>(this.deleteConfiguredJobUrl,{params:params})
+ }
 }

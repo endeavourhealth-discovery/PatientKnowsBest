@@ -1,0 +1,96 @@
+<h3 mat-dialog-title>Add Job</h3>
+<mat-dialog-content>
+
+
+  <p  *ngIf="success && typeOfJob" style="color: green ; background: antiquewhite"><strong class="d-flex justify-content-start p-2">Sucess : Job Successfully Created Please Make Sure Jar Is In Class Path </strong></p>
+
+  <p  *ngIf="success && !typeOfJob" style="color: green ; background: antiquewhite"><strong class="d-flex justify-content-start p-2">Sucess : Job Successfully Created Please Make Sure Web Service Is Available </strong></p>
+
+
+  <p  *ngIf="failure" style="color: red;background: antiquewhite"><strong class="d-flex justify-content-start p-2">Error : Given Job Name Already Exists Please Change The Job Name </strong></p>
+
+  <mat-radio-group class="mt-2" aria-label="Select an option" color="primary" [(ngModel)]="typeOfJob">
+
+    <mat-radio-button [value]=true >Jar File</mat-radio-button>
+    <mat-radio-button class="ml-3" [value]=false  checked>Web Service</mat-radio-button>
+  </mat-radio-group>
+
+
+<form  #jobForm ="ngForm">
+
+
+  <div *ngIf="!typeOfJob"   ngModelGroup="urlGroup" >
+
+   <div> <mat-form-field class="input">
+      <mat-label>Job Name</mat-label>
+      <input  name = 'jobName' matInput ngModel #jobName='ngModel' required>
+   </mat-form-field></div>
+
+    <div><mat-form-field class="input">
+  <mat-label>Start Url</mat-label>
+    <input  ngModel matInput name="starturl" #start='ngModel'required>
+</mat-form-field>
+    </div>
+ <div> <mat-form-field class="input">
+    <mat-label >Stop Url</mat-label>
+    <input  ngModel  name="stopurl" #stop='ngModel' matInput required>
+
+  </mat-form-field>
+ </div>
+  </div>
+
+
+
+  <div *ngIf="typeOfJob"   ngModelGroup="classGroup" >
+
+   <div> <mat-form-field class="input">
+      <mat-label>Job Name</mat-label>
+      <input name = 'jobName' matInput ngModel #jobName='ngModel' required>
+
+   </mat-form-field></div>
+   <div>
+
+     <div> <mat-form-field class="input">
+       <mat-label>Class Path</mat-label>
+       <input name = 'classpath' matAutosize=true matInput ngModel #classpath='ngModel' required>
+
+     </mat-form-field></div>
+
+     <div>
+
+    <mat-form-field class="input">
+      <mat-label>Start Method</mat-label>
+      <input  ngModel matInput name="startmethod" #start='ngModel'required>
+    </mat-form-field></div>
+
+    <div><mat-form-field class="input">
+      <mat-label >Stop Method</mat-label>
+      <input  ngModel  name="stopmethod" #stop='ngModel' matInput required>
+
+    </mat-form-field>
+    </div>
+
+    <div>
+    <mat-form-field class="input">
+      <mat-label >Parameters</mat-label>
+      <input  ngModel  name="parameters" #parameter='ngModel' matInput >
+
+    </mat-form-field>
+    </div>
+
+  </div>
+
+  </div>
+<div class="d-flex justify-content-end">
+    <button (click)="onSubmit()" *ngIf="!isUpdate" [disabled] = "!jobForm.valid" mat-raised-button color="primary" >Submit</button>
+
+  <button (click)="onUpdate()" *ngIf="isUpdate" [disabled]="!jobForm.valid" mat-raised-button color="primary">Update</button>
+
+
+  <button class = 'ml-3' (click)="close()"  mat-raised-button color="warn">Close</button>
+
+</div>
+</form>
+
+
+</mat-dialog-content>

@@ -24,5 +24,8 @@ public interface Jobs_repo extends JpaRepository<Available_jobs,String> {
     @Query(value = "select * from available_jobs  a where a.job_name = ?",nativeQuery = true)
     Available_jobs findAvailable_jobsByJob_name(String job_name);
 
+    @Query(value = "select count(*) from available_jobs  a where a.job_name = ?",nativeQuery = true)
+    Integer findByJob_name(String job_name);
+
 
 }

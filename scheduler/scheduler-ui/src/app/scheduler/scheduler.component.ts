@@ -6,6 +6,8 @@ import {ServerResponseCode}   from './response.code.constants'
 import { AvailableJobs, Job_Details } from './respose.interfaces';
 import {MatRadioButton} from '@angular/material/radio';
 import {MatSnackBar}  from '@angular/material/snack-bar';
+import {MatDialog} from "@angular/material/dialog";
+import {NewJobComponent} from "../new-job/new-job.component";
 
 
 @Component({
@@ -43,7 +45,8 @@ jobType:boolean=true;
   constructor(private _formBuilder:FormBuilder,
     private _schedulerService:SchedulerService,
     private _responseCode : ServerResponseCode,
-    private  _matSnackBar:MatSnackBar) {
+    private  _matSnackBar:MatSnackBar,
+              ) {
 
    this.jobNameStatus='';
 
@@ -84,6 +87,8 @@ jobType:boolean=true;
   ngOnDestroy() {
     this.jobRefreshTimerSubscription.unsubscribe();
   }
+
+
 
 
 /***Gets all the schduled jobs  */

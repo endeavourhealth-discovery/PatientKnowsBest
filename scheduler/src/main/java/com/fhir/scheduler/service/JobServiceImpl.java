@@ -45,18 +45,19 @@ public class JobServiceImpl implements JobService {
     @Autowired
     private History_repo history_repo;
 
+
     /**
      * Schedule a job by jobName at given date.
      */
     @Override
-    public boolean scheduleOneTimeJob(String jobName, Class<? extends QuartzJobBean> jobClass, Date date,String jobType) {
+    public boolean scheduleOneTimeJob(String jobName, Class<? extends QuartzJobBean> jobClass, Date date, String jobType) {
 //		System.out.println("Request received to scheduleJob");
 
         String jobKey = jobName;
         String groupKey = "SampleGroup";
         String triggerKey = jobName;
 
-        JobDetail jobDetail = JobUtil.createJob(jobClass, false, context, jobKey, groupKey,jobType);
+        JobDetail jobDetail = JobUtil.createJob(jobClass, false, context, jobKey, groupKey, jobType);
 
         System.out.println("creating trigger for key :" + jobKey + " at date :" + date);
         Trigger cronTriggerBean = JobUtil.createSingleTrigger(triggerKey, date, SimpleTrigger.MISFIRE_INSTRUCTION_RESCHEDULE_NEXT_WITH_REMAINING_COUNT);
@@ -69,7 +70,7 @@ public class JobServiceImpl implements JobService {
             System.out.println("Job with key jobKey :" + jobKey + " and group :" + groupKey + " scheduled successfully for date :" + dt);
 
 
-            jobs_repo.updateStatus(true,triggerKey);
+            jobs_repo.updateStatus(true, triggerKey);
             return true;
         } catch (SchedulerException e) {
             System.out.println("SchedulerException while scheduling job with key :" + jobKey + " message :" + e.getMessage());
@@ -83,14 +84,14 @@ public class JobServiceImpl implements JobService {
      * Schedule a job by jobName at given date.
      */
     @Override
-    public boolean scheduleCronJob(String jobName, Class<? extends QuartzJobBean> jobClass, Date date, String cronExpression,String jobType) {
+    public boolean scheduleCronJob(String jobName, Class<? extends QuartzJobBean> jobClass, Date date, String cronExpression, String jobType) {
         System.out.println("Request received to scheduleJob");
 
         String jobKey = jobName;
         String groupKey = "SampleGroup";
         String triggerKey = jobName;
 
-        JobDetail jobDetail = JobUtil.createJob(jobClass, false, context, jobKey, groupKey,jobType);
+        JobDetail jobDetail = JobUtil.createJob(jobClass, false, context, jobKey, groupKey, jobType);
 
         System.out.println("creating trigger for key :" + jobKey + " at date :" + date);
         Trigger cronTriggerBean = JobUtil.createCronTrigger(triggerKey, date, cronExpression, CronTrigger.MISFIRE_INSTRUCTION_DO_NOTHING);
@@ -99,7 +100,7 @@ public class JobServiceImpl implements JobService {
             Scheduler scheduler = schedulerFactoryBean.getScheduler();
             Date dt = scheduler.scheduleJob(jobDetail, cronTriggerBean);
             System.out.println("Job with key jobKey :" + jobKey + " and group :" + groupKey + " scheduled successfully for date :" + dt);
-            jobs_repo.updateStatus(true,triggerKey);
+            jobs_repo.updateStatus(true, triggerKey);
             return true;
         } catch (SchedulerException e) {
             System.out.println("SchedulerException while scheduling job with key :" + jobKey + " message :" + e.getMessage());
@@ -145,7 +146,7 @@ public class JobServiceImpl implements JobService {
         System.out.println("Parameters received for updating cron job : jobKey :" + jobKey + ", date: " + date);
         try {
             //Trigger newTrigger = JobUtil.createSingleTrigger(jobKey, date, SimpleTrigger.MISFIRE_INSTRUCTION_RESCHEDULE_NEXT_WITH_REMAINING_COUNT);
-            Trigger newTrigger = JobUtil.createCronTrigger(jobKey, date, cronExpression, CronTrigger.MISFIRE_INSTRUCTION_DO_NOTHING	);
+            Trigger newTrigger = JobUtil.createCronTrigger(jobKey, date, cronExpression, CronTrigger.MISFIRE_INSTRUCTION_DO_NOTHING);
 
             Date dt = schedulerFactoryBean.getScheduler().rescheduleJob(TriggerKey.triggerKey(jobKey), newTrigger);
             System.out.println("Trigger associated with jobKey :" + jobKey + " rescheduled successfully for date :" + dt);
@@ -171,7 +172,7 @@ public class JobServiceImpl implements JobService {
         System.out.println("Parameters received for unscheduling job : tkey :" + jobKey);
         try {
             boolean status = schedulerFactoryBean.getScheduler().unscheduleJob(tkey);
-            System.out.println("Trigger associated with jobKey :" + jobKey + " unscheduled with status :" + status+"pppppppppppppppppppppppppppppppppppppppppp");
+            System.out.println("Trigger associated with jobKey :" + jobKey + " unscheduled with status :" + status + "pppppppppppppppppppppppppppppppppppppppppp");
             return status;
         } catch (SchedulerException e) {
             System.out.println("SchedulerException while unscheduling job with key :" + jobKey + " message :" + e.getMessage());
@@ -200,7 +201,7 @@ public class JobServiceImpl implements JobService {
             update fhir_Scheduler.available_jobs set status=false
             where fhir_Scheduler.available_jobs.job_name = old.job_name  ;
             */
-            jobs_repo.updateStatus(false,jobKey);
+            jobs_repo.updateStatus(false, jobKey);
             return status;
         } catch (SchedulerException e) {
             System.out.println("SchedulerException while deleting job with key :" + jobKey + " message :" + e.getMessage());
@@ -466,32 +467,32 @@ public class JobServiceImpl implements JobService {
     @Override
     public List<Available_jobs> getAvailableJobs() {
 
-        return  jobs_repo.findAvailable_jobsByStatusFalse();
+        return jobs_repo.findAvailable_jobsByStatusFalse();
 
     }
 
-/**
- * This method checks if any of the details present
- * like start_url , stop_url
- * or class_path and all method names
- * */
+    /**
+     * This method checks if any of the details present
+     * like start_url , stop_url
+     * or class_path and all method names
+     */
     @Override
     public boolean checkJobDetailsExists(String jobName) {
 
-       Available_jobs job =  jobs_repo.findAvailable_jobsByJob_name(jobName);
-       if (job!=null){
-         //check for start url and start url
-           if (job.getStart_url() !=null && job.getStop_url() != null){
-               return true;
-           }else if (job.getClass_path()!= null && job.getStop_method() != null && job.getStart_method() != null ){
-               return true ;
-           }else{
+        Available_jobs job = jobs_repo.findAvailable_jobsByJob_name(jobName);
+        if (job != null) {
+            //check for start url and start url
+            if (job.getStart_url() != null && job.getStop_url() != null) {
+                return true;
+            } else if (job.getClass_path() != null && job.getStop_method() != null && job.getStart_method() != null) {
+                return true;
+            } else {
 //               System.out.println(job.);
-               return  false ;
-           }
-       }else {
-           return false;
-       }
+                return false;
+            }
+        } else {
+            return false;
+        }
     }
 
 
@@ -505,11 +506,11 @@ public class JobServiceImpl implements JobService {
     @Override
     public String getJobType(String jobName) {
 
-        Available_jobs job =  jobs_repo.findAvailable_jobsByJob_name(jobName);
+        Available_jobs job = jobs_repo.findAvailable_jobsByJob_name(jobName);
 
-        if (job.getStart_url()!=null){
+        if (job.getStart_url() != null) {
             return "HTTP";
-        }else{
+        } else {
             return "CLASS";
         }
 
@@ -524,9 +525,9 @@ public class JobServiceImpl implements JobService {
         String date_ = sd.format(new Date());
         Date curr_date = sd.parse(date_);
 
-        if (curr_date.after(date)){
+        if (curr_date.after(date)) {
             return false;
-        }else{
+        } else {
             return true;
         }
 
@@ -537,9 +538,58 @@ public class JobServiceImpl implements JobService {
     public List<History> getLog() {
         return history_repo.findAll();
     }
+
+
+    public boolean addHttpJob(String jobName, String startUrl, String stopUrl) {
+
+        int exists = jobs_repo.findByJob_name(jobName);
+        if (exists > 0) {
+            return false;
+        } else {
+            Available_jobs job = new Available_jobs();
+            job.setJob_name(jobName.trim().toUpperCase());
+            job.setStart_url(startUrl);
+            job.setStop_url(stopUrl);
+            job.setStatus(false);
+            jobs_repo.save(job);
+            return true;
+        }
+
+
+    }
+
+
+    @Override
+    public boolean addClassJob(String jobName, String startmethod, String stopmethod, String classPath, String parameters) {
+        int exists = jobs_repo.findByJob_name(jobName);
+        if (exists > 0) {
+            return false;
+        } else {
+            Available_jobs job = new Available_jobs();
+            job.setJob_name(jobName.trim().toUpperCase());
+           job.setClass_path(classPath.trim());
+           job.setStart_method(startmethod.trim());
+           job.setStop_method(stopmethod.trim());
+           job.setParameters(parameters.trim());
+            job.setStatus(false);
+            jobs_repo.save(job);
+            return true;
+        }
+
+    }
+
+    @Override
+    public List<Available_jobs> getConfiguredJobs() {
+      return   this.jobs_repo.findAll();
+    }
+
+    @Override
+    public boolean deleteConfiguredJob(String jobName) {
+        this.jobs_repo.delete(jobName);
+
+        return true;
+    }
 }
-
-
 
 
 

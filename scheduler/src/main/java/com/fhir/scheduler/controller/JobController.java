@@ -5,13 +5,12 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import com.fhir.scheduler.entity.Available_jobs;
+import com.fhir.scheduler.repo.Jobs_repo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.fhir.scheduler.dto.ServerResponse;
 import com.fhir.scheduler.job.CronJob;
@@ -28,6 +27,14 @@ public class JobController {
 	@Autowired
 	@Lazy
 	JobService jobService;
+
+
+	@Autowired
+	Available_jobs jobs;
+
+
+
+
 
 	@RequestMapping("schedule")	
 	public ServerResponse schedule(@RequestParam("jobName") String jobName, 
@@ -316,6 +323,45 @@ public class JobController {
 	public ServerResponse getLogs(){
 
 		return getServerResponse(ServerResponseCode.SUCCESS,jobService.getLog());
+	}
+
+	@PostMapping("addHttpJob")
+	public ServerResponse addHttpJob(@RequestBody Map<String, String > payload){
+  	boolean exists = jobService.addHttpJob(payload.get("jobName"),payload.get("starturl"),payload.get("stopurl"));
+
+
+
+
+		if(exists==false){
+	return getServerResponse(ServerResponseCode.JOB_WITH_SAME_NAME_EXIST,false);
+		}else {
+			return getServerResponse(ServerResponseCode.SUCCESS,true);
+		}
+
+
+	}
+
+
+	@PostMapping("addClassJob")
+	public ServerResponse addClassJob(@RequestBody Map<String, String > payload){
+		boolean exists = jobService.addClassJob(payload.get("jobName"),payload.get("startmethod"),payload.get("stopmethod"),payload.get("classpath"),payload.get("parameters"));
+		if(exists==false){
+			return getServerResponse(ServerResponseCode.JOB_WITH_SAME_NAME_EXIST,false);
+		}else {
+			return getServerResponse(ServerResponseCode.SUCCESS,true);
+		}
+	}
+
+
+	@GetMapping("getConfiguredJobs")
+	public ServerResponse getConfiguredJobs(){
+		return getServerResponse(ServerResponseCode.SUCCESS,jobService.getConfiguredJobs());
+	}
+
+	@DeleteMapping("deleteConfiguredJob")
+	public ServerResponse deleteConfiguredJob(@RequestParam("jobName") String jobName){
+		jobService.deleteConfiguredJob(jobName);
+		return getServerResponse(ServerResponseCode.SUCCESS,jobService.getConfiguredJobs());
 	}
 
 

@@ -46,4 +46,21 @@ export interface LogDetails{
   job_complete_time : Date
 }
 
+export interface  ConfiguredJobs{
+  statusCode : Number ,
+  data : ConfiguredJob[]
+}
+
+
+export interface ConfiguredJob {
+  "job_name": String,
+  "class_path": String,
+  "start_method": String,
+  "stop_method": String,
+  "parameters":String,
+  "status": boolean,
+  "start_url": String,
+  "stop_url": String
+}
+
 

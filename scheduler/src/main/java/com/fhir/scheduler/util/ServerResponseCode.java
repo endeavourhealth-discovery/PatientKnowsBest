@@ -12,7 +12,10 @@ public class ServerResponseCode {
 	public static final int JOB_NOT_IN_RUNNING_STATE = 521;
 	public static final int JOB_DETAILS_UNKNOWN = 515;
 	public static final int JOB_DOESNT_EXIST = 500;
-	
+
+
+
+
 	//GENERIC ERROR
 	public static final int ERROR = 600;
 	

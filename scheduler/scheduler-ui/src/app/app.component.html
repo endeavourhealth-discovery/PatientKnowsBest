@@ -1,2 +1,32 @@
 
-<app-scheduler></app-scheduler>
+
+<nav class="navbar navbar-expand-lg  navbar-dark bg-dark">
+  <a class="navbar-brand" routerLink="">FHIR SCHEDULER</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarNav">
+    <ul class="navbar-nav">
+      <li class="nav-item ">
+        <a class="nav-link" routerLink="">Schedule<span class="sr-only">(current)</span></a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link"  routerLink="configureJob">Configure Job<span class="sr-only">(current)</span></a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" routerLink="history">History<span class="sr-only">(current)</span></a>
+      </li>
+
+
+    </ul>
+  </div>
+</nav>
+
+<!--<nav class="navbar navbar-dark bg-dark" mat-tab-nav-bar >-->
+<!--  <span style="margin-top: 0;font-size: 38px;" class="navbar-brand mb-0 h1">FHIR Scheduler</span>-->
+<!-- <a mat-tab-link  routerLink=""-->
+<!-- > Home</a>-->
+<!-- <span routerLinkActive="active"> <a mat-tab-link  routerLink="history"-->
+<!--           routerLinkActive="active" > History</a></span>-->
+<!--</nav>-->
+<router-outlet></router-outlet>
