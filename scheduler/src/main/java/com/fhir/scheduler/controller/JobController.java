@@ -20,7 +20,7 @@ import com.fhir.scheduler.util.ServerResponseCode;
 
 
 @RestController
-@CrossOrigin(origins = "http://10.0.10.59:4200")
+@CrossOrigin(origins = "http://10.0.101.59:4200")
 @RequestMapping("/scheduler/")
 public class JobController {
 
