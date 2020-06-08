@@ -4,10 +4,11 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fhir.scheduler.entity.Available_jobs;
-import com.fhir.scheduler.entity.History;
 import com.fhir.scheduler.repo.History_repo;
 import com.fhir.scheduler.repo.Jobs_repo;
+import com.fhir.scheduler.entity.History;
 import org.quartz.*;
 import org.quartz.Trigger.TriggerState;
 import org.quartz.impl.matchers.GroupMatcher;
@@ -17,6 +18,8 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 import org.springframework.stereotype.Service;
+
+import javax.persistence.EntityNotFoundException;
 
 
 @Service
@@ -563,10 +566,10 @@ public class JobServiceImpl implements JobService {
         } else {
             Available_jobs job = new Available_jobs();
             job.setJob_name(jobName.trim().toUpperCase());
-           job.setClass_path(classPath.trim());
-           job.setStart_method(startmethod.trim());
-           job.setStop_method(stopmethod.trim());
-           job.setParameters(parameters.trim());
+            job.setClass_path(classPath.trim());
+            job.setStart_method(startmethod.trim());
+            job.setStop_method(stopmethod.trim());
+            job.setParameters(parameters.trim());
             job.setStatus(false);
             jobs_repo.save(job);
             return true;
@@ -576,7 +579,7 @@ public class JobServiceImpl implements JobService {
 
     @Override
     public List<Available_jobs> getConfiguredJobs() {
-      return   this.jobs_repo.findAll();
+        return this.jobs_repo.findAll();
     }
 
     @Override
@@ -584,6 +587,53 @@ public class JobServiceImpl implements JobService {
         this.jobs_repo.delete(jobName);
 
         return true;
+    }
+
+
+    @Override
+    public boolean updateHttpJob(String jobName, String startUrl, String stopUrl) {
+
+        if (jobName != null){
+            try {
+                Available_jobs job = jobs_repo.getOne(jobName);
+                job.setParameters(null);
+                job.setStop_method(null);
+                job.setStart_method(null);
+                job.setStop_url(stopUrl.trim());
+                job.setStart_url(startUrl.trim());
+                job.setClass_path(null);
+                jobs_repo.save(job);
+
+                return true;
+            }catch (EntityNotFoundException e){
+                return false;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean updateClassJob(String jobName, String startmethod, String stopmethod, String classPath, String parameters) {
+
+
+        if (jobName != null){
+            try {
+                Available_jobs job = jobs_repo.getOne(jobName);
+                job.setParameters(parameters);
+                job.setStop_method(stopmethod.trim());
+                job.setStart_method(startmethod.trim());
+                job.setClass_path(classPath.trim());
+                job.setStop_url(null);
+                job.setStart_url(null);
+                jobs_repo.save(job);
+                return true;
+            }catch (EntityNotFoundException e){
+                return false;
+            }
+        }
+
+
+        return false;
     }
 }
 

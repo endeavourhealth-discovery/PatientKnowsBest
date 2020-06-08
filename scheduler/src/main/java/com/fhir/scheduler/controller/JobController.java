@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.fhir.scheduler.entity.Available_jobs;
-import com.fhir.scheduler.repo.Jobs_repo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -33,52 +32,49 @@ public class JobController {
 	Available_jobs jobs;
 
 
-
-
-
-	@RequestMapping("schedule")	
-	public ServerResponse schedule(@RequestParam("jobName") String jobName, 
-			@RequestParam("jobScheduleTime") @DateTimeFormat(pattern = "yyyy/MM/dd HH:mm") Date jobScheduleTime, 
-			@RequestParam("cronExpression") String cronExpression) throws ParseException {
+	@RequestMapping("schedule")
+	public ServerResponse schedule(@RequestParam("jobName") String jobName,
+								   @RequestParam("jobScheduleTime") @DateTimeFormat(pattern = "yyyy/MM/dd HH:mm") Date jobScheduleTime,
+								   @RequestParam("cronExpression") String cronExpression) throws ParseException {
 		System.out.println("JobController.schedule()");
 
 		//Job Name is mandatory
-		if(jobName == null || jobName.trim().equals("")){
+		if (jobName == null || jobName.trim().equals("")) {
 			return getServerResponse(ServerResponseCode.JOB_NAME_NOT_PRESENT, false);
 		}
 
 		//Check if job Name is unique and job details exists
 
-		if(!jobService.isJobWithNamePresent(jobName)){
-       if(jobService.checkJobDetailsExists(jobName)) {
-	if (cronExpression == null || cronExpression.trim().equals("")) {
-		if(jobService.checkValidDate(jobScheduleTime)) {
-			//Single Trigger
-			String jobType = jobService.getJobType(jobName);
-			boolean status = jobService.scheduleOneTimeJob(jobName, SimpleJob.class, jobScheduleTime, jobType);
-			if (status) {
-				return getServerResponse(ServerResponseCode.SUCCESS, jobService.getAllJobs());
-			} else {
-				return getServerResponse(ServerResponseCode.ERROR, false);
-			}
+		if (!jobService.isJobWithNamePresent(jobName)) {
+			if (jobService.checkJobDetailsExists(jobName)) {
+				if (cronExpression == null || cronExpression.trim().equals("")) {
+					if (jobService.checkValidDate(jobScheduleTime)) {
+						//Single Trigger
+						String jobType = jobService.getJobType(jobName);
+						boolean status = jobService.scheduleOneTimeJob(jobName, SimpleJob.class, jobScheduleTime, jobType);
+						if (status) {
+							return getServerResponse(ServerResponseCode.SUCCESS, jobService.getAllJobs());
+						} else {
+							return getServerResponse(ServerResponseCode.ERROR, false);
+						}
 
-		}else{
-			return getServerResponse(ServerResponseCode.TIME_ERROR,false);
-		}
+					} else {
+						return getServerResponse(ServerResponseCode.TIME_ERROR, false);
+					}
+				} else {
+					//Cron Trigger
+					String jobType = jobService.getJobType(jobName); //this gives the job type and this must be sent as paramenter to the
+					boolean status = jobService.scheduleCronJob(jobName, CronJob.class, new Date(), cronExpression, jobType);
+					if (status) {
+						return getServerResponse(ServerResponseCode.SUCCESS, jobService.getAllJobs());
+					} else {
+						return getServerResponse(ServerResponseCode.ERROR, false);
+					}
+				}
+			} else {
+				return getServerResponse(ServerResponseCode.JOB_DETAILS_UNKNOWN, false);
+			}
 		} else {
-		//Cron Trigger
-		String jobType = jobService.getJobType(jobName); //this gives the job type and this must be sent as paramenter to the
-		boolean status = jobService.scheduleCronJob(jobName, CronJob.class,new Date(), cronExpression,jobType);
-		if (status) {
-			return getServerResponse(ServerResponseCode.SUCCESS, jobService.getAllJobs());
-		} else {
-			return getServerResponse(ServerResponseCode.ERROR, false);
-		}
-	}
-}else{
-	return getServerResponse(ServerResponseCode.JOB_DETAILS_UNKNOWN,false);
-}
-		}else{
 			return getServerResponse(ServerResponseCode.JOB_WITH_SAME_NAME_EXIST, false);
 		}
 	}
@@ -91,22 +87,22 @@ public class JobController {
 
 	@RequestMapping("delete")
 	public ServerResponse delete(@RequestParam("jobName") String jobName) {
-		System.out.println("JobController.delete()");		
+		System.out.println("JobController.delete()");
 
-		if(jobService.isJobWithNamePresent(jobName)){
+		if (jobService.isJobWithNamePresent(jobName)) {
 			boolean isJobRunning = jobService.isJobRunning(jobName);
 
-			if(!isJobRunning){
+			if (!isJobRunning) {
 				boolean status = jobService.deleteJob(jobName);
-				if(status){
+				if (status) {
 					return getServerResponse(ServerResponseCode.SUCCESS, true);
-				}else{
+				} else {
 					return getServerResponse(ServerResponseCode.ERROR, false);
 				}
-			}else{
+			} else {
 				return getServerResponse(ServerResponseCode.JOB_ALREADY_IN_RUNNING_STATE, false);
 			}
-		}else{
+		} else {
 			//Job doesn't exist
 			return getServerResponse(ServerResponseCode.JOB_DOESNT_EXIST, false);
 		}
@@ -116,99 +112,98 @@ public class JobController {
 	public ServerResponse pause(@RequestParam("jobName") String jobName) {
 		System.out.println("JobController.pause()");
 
-		if(jobService.isJobWithNamePresent(jobName)){
+		if (jobService.isJobWithNamePresent(jobName)) {
 
 			boolean isJobRunning = jobService.isJobRunning(jobName);
 
-			if(!isJobRunning){
+			if (!isJobRunning) {
 				boolean status = jobService.pauseJob(jobName);
-				if(status){
+				if (status) {
 					return getServerResponse(ServerResponseCode.SUCCESS, true);
-				}else{
+				} else {
 					return getServerResponse(ServerResponseCode.ERROR, false);
-				}			
-			}else{
+				}
+			} else {
 				return getServerResponse(ServerResponseCode.JOB_ALREADY_IN_RUNNING_STATE, false);
 			}
 
-		}else{
+		} else {
 			//Job doesn't exist
 			return getServerResponse(ServerResponseCode.JOB_DOESNT_EXIST, false);
-		}		
+		}
 	}
 
 	@RequestMapping("resume")
 	public ServerResponse resume(@RequestParam("jobName") String jobName) {
 		System.out.println("JobController.resume()");
 
-		if(jobService.isJobWithNamePresent(jobName)){
+		if (jobService.isJobWithNamePresent(jobName)) {
 			String jobState = jobService.getJobState(jobName);
 
-			if(jobState.equals("PAUSED")){
+			if (jobState.equals("PAUSED")) {
 				System.out.println("Job current state is PAUSED, Resuming job...");
 				boolean status = jobService.resumeJob(jobName);
 
-				if(status){
+				if (status) {
 					return getServerResponse(ServerResponseCode.SUCCESS, true);
-				}else{
+				} else {
 					return getServerResponse(ServerResponseCode.ERROR, false);
 				}
-			}else{
+			} else {
 				return getServerResponse(ServerResponseCode.JOB_NOT_IN_PAUSED_STATE, false);
 			}
 
-		}else{
+		} else {
 			//Job doesn't exist
 			return getServerResponse(ServerResponseCode.JOB_DOESNT_EXIST, false);
 		}
 	}
 
 	@RequestMapping("update")
-	public ServerResponse updateJob(@RequestParam("jobName") String jobName, 
-			@RequestParam("jobScheduleTime") @DateTimeFormat(pattern = "yyyy/MM/dd HH:mm") Date jobScheduleTime, 
-			@RequestParam("cronExpression") String cronExpression) throws ParseException {
+	public ServerResponse updateJob(@RequestParam("jobName") String jobName,
+									@RequestParam("jobScheduleTime") @DateTimeFormat(pattern = "yyyy/MM/dd HH:mm") Date jobScheduleTime,
+									@RequestParam("cronExpression") String cronExpression) throws ParseException {
 		System.out.println("JobController.updateJob()");
 
 		//Job Name is mandatory
-		if(jobName == null || jobName.trim().equals("")){
+		if (jobName == null || jobName.trim().equals("")) {
 			return getServerResponse(ServerResponseCode.JOB_NAME_NOT_PRESENT, false);
 		}
 
 		//Edit Job
-		if(jobService.isJobWithNamePresent(jobName)){
-			
-			if(cronExpression == null || cronExpression.trim().equals("")) {
+		if (jobService.isJobWithNamePresent(jobName)) {
+
+			if (cronExpression == null || cronExpression.trim().equals("")) {
 				//Single Trigger
 				if (jobService.checkValidDate(jobScheduleTime)) {
 					boolean status = jobService.updateOneTimeJob(jobName, jobScheduleTime);
 					if (status) {
 						return getServerResponse(ServerResponseCode.SUCCESS, jobService.getAllJobs());
+					} else {
+						return getServerResponse(ServerResponseCode.ERROR, false);
 					}
-				else {
-					return getServerResponse(ServerResponseCode.ERROR, false);
+				} else {
+					return getServerResponse(ServerResponseCode.TIME_ERROR, false);
 				}
-			}else{
-					return getServerResponse(ServerResponseCode.TIME_ERROR,false);
-				}
-				
-			}else{
+
+			} else {
 				//Cron Trigger
 				boolean status = jobService.updateCronJob(jobName, new Date(), cronExpression);
-				if(status){
+				if (status) {
 					return getServerResponse(ServerResponseCode.SUCCESS, jobService.getAllJobs());
-				}else{
+				} else {
 					return getServerResponse(ServerResponseCode.ERROR, false);
-				}				
+				}
 			}
-			
-			
-		}else{
+
+
+		} else {
 			return getServerResponse(ServerResponseCode.JOB_DOESNT_EXIST, false);
 		}
 	}
 
 	@RequestMapping("jobs")
-	public ServerResponse getAllJobs(){
+	public ServerResponse getAllJobs() {
 //		System.out.println("JobController.getAllJobs()");
 
 		List<Map<String, Object>> list = jobService.getAllJobs();
@@ -216,14 +211,14 @@ public class JobController {
 	}
 
 	@RequestMapping("checkJobName")
-	public ServerResponse checkJobName(@RequestParam("jobName") String jobName){
+	public ServerResponse checkJobName(@RequestParam("jobName") String jobName) {
 //		System.out.println("JobController.checkJobName()");
 
 		//Job Name is mandatory
-		if(jobName == null || jobName.trim().equals("")){
+		if (jobName == null || jobName.trim().equals("")) {
 			return getServerResponse(ServerResponseCode.JOB_NAME_NOT_PRESENT, false);
 		}
-		
+
 		boolean status = jobService.isJobWithNamePresent(jobName);
 		return getServerResponse(ServerResponseCode.SUCCESS, status);
 	}
@@ -248,23 +243,23 @@ public class JobController {
 	public ServerResponse stopJob(@RequestParam("jobName") String jobName) {
 		System.out.println("JobController.stopJob()");
 
-		if(jobService.isJobWithNamePresent(jobName)){
+		if (jobService.isJobWithNamePresent(jobName)) {
 
-			if(jobService.isJobRunning(jobName)){
+			if (jobService.isJobRunning(jobName)) {
 				boolean status = jobService.stopJob(jobName);
-				if(status){
+				if (status) {
 					return getServerResponse(ServerResponseCode.SUCCESS, true);
-				}else{
+				} else {
 					//Server error
 					return getServerResponse(ServerResponseCode.ERROR, false);
 				}
 
-			}else{
+			} else {
 				//Job not in running state
 				return getServerResponse(ServerResponseCode.JOB_NOT_IN_RUNNING_STATE, false);
 			}
 
-		}else{
+		} else {
 			//Job doesn't exist
 			return getServerResponse(ServerResponseCode.JOB_DOESNT_EXIST, false);
 		}
@@ -274,68 +269,65 @@ public class JobController {
 	public ServerResponse startJobNow(@RequestParam("jobName") String jobName) {
 //		System.out.println("JobController.startJobNow()");
 
-		if(jobService.isJobWithNamePresent(jobName)){
+		if (jobService.isJobWithNamePresent(jobName)) {
 
-			if(!jobService.isJobRunning(jobName)){
+			if (!jobService.isJobRunning(jobName)) {
 				boolean status = jobService.startJobNow(jobName);
 
-				if(status){
+				if (status) {
 					//Success
 					return getServerResponse(ServerResponseCode.SUCCESS, true);
 
-				}else{
+				} else {
 					//Server error
 					return getServerResponse(ServerResponseCode.ERROR, false);
 				}
 
-			}else{
+			} else {
 				//Job already running
 				return getServerResponse(ServerResponseCode.JOB_ALREADY_IN_RUNNING_STATE, false);
 			}
 
-		}else{
+		} else {
 			//Job doesn't exist
 			return getServerResponse(ServerResponseCode.JOB_DOESNT_EXIST, false);
 		}
 	}
 
-	public ServerResponse getServerResponse(int responseCode, Object data){
+	public ServerResponse getServerResponse(int responseCode, Object data) {
 		ServerResponse serverResponse = new ServerResponse();
 		serverResponse.setStatusCode(responseCode);
 		serverResponse.setData(data);
-		return serverResponse; 
+		return serverResponse;
 	}
 
 
-
-
 	@RequestMapping("getAvailableJobs")
-	public ServerResponse getAvailableJobs(){
+	public ServerResponse getAvailableJobs() {
 //		for (Available_jobs jobs:
 //		jobService.getAllJobs()) {
 //			System.out.println(jobs.getJob_name());
 //		}
 
-		return getServerResponse(ServerResponseCode.SUCCESS,jobService.getAvailableJobs());
+		return getServerResponse(ServerResponseCode.SUCCESS, jobService.getAvailableJobs());
 	}
 
 	@RequestMapping("getLogs")
-	public ServerResponse getLogs(){
+	public ServerResponse getLogs() {
 
-		return getServerResponse(ServerResponseCode.SUCCESS,jobService.getLog());
+		return getServerResponse(ServerResponseCode.SUCCESS, jobService.getLog());
 	}
 
+
 	@PostMapping("addHttpJob")
-	public ServerResponse addHttpJob(@RequestBody Map<String, String > payload){
-  	boolean exists = jobService.addHttpJob(payload.get("jobName"),payload.get("starturl"),payload.get("stopurl"));
+	public ServerResponse addHttpJob(@RequestBody Map<String, String> payload) {
+		boolean exists = jobService.addHttpJob(payload.get("jobName"), payload.get("starturl"), payload.get("stopurl"));
 
 
-
-
-		if(exists==false){
-	return getServerResponse(ServerResponseCode.JOB_WITH_SAME_NAME_EXIST,false);
-		}else {
-			return getServerResponse(ServerResponseCode.SUCCESS,true);
+		if (exists == false) {
+			return getServerResponse(ServerResponseCode.JOB_WITH_SAME_NAME_EXIST, false);
+		} else {
+			return getServerResponse(ServerResponseCode.SUCCESS, true);
 		}
 
 
@@ -343,25 +335,50 @@ public class JobController {
 
 
 	@PostMapping("addClassJob")
-	public ServerResponse addClassJob(@RequestBody Map<String, String > payload){
-		boolean exists = jobService.addClassJob(payload.get("jobName"),payload.get("startmethod"),payload.get("stopmethod"),payload.get("classpath"),payload.get("parameters"));
-		if(exists==false){
-			return getServerResponse(ServerResponseCode.JOB_WITH_SAME_NAME_EXIST,false);
-		}else {
-			return getServerResponse(ServerResponseCode.SUCCESS,true);
+	public ServerResponse addClassJob(@RequestBody Map<String, String> payload) {
+		boolean exists = jobService.addClassJob(payload.get("jobName"), payload.get("startmethod"), payload.get("stopmethod"), payload.get("classpath"), payload.get("parameters"));
+		if (exists == false) {
+			return getServerResponse(ServerResponseCode.JOB_WITH_SAME_NAME_EXIST, false);
+		} else {
+			return getServerResponse(ServerResponseCode.SUCCESS, true);
 		}
 	}
 
 
 	@GetMapping("getConfiguredJobs")
-	public ServerResponse getConfiguredJobs(){
-		return getServerResponse(ServerResponseCode.SUCCESS,jobService.getConfiguredJobs());
+	public ServerResponse getConfiguredJobs() {
+		return getServerResponse(ServerResponseCode.SUCCESS, jobService.getConfiguredJobs());
 	}
 
 	@DeleteMapping("deleteConfiguredJob")
-	public ServerResponse deleteConfiguredJob(@RequestParam("jobName") String jobName){
+	public ServerResponse deleteConfiguredJob(@RequestParam("jobName") String jobName) {
 		jobService.deleteConfiguredJob(jobName);
-		return getServerResponse(ServerResponseCode.SUCCESS,jobService.getConfiguredJobs());
+		return getServerResponse(ServerResponseCode.SUCCESS, jobService.getConfiguredJobs());
+	}
+
+
+	@PutMapping("updateHttpJob")
+	public ServerResponse updateHttpJob(@RequestBody Map<String, String> payload) {
+		boolean status = jobService.updateHttpJob(payload.get("jobName"), payload.get("startUrl"), payload.get("stopUrl"));
+		if (status) {
+			return getServerResponse(ServerResponseCode.SUCCESS,true);
+		} else {
+			return getServerResponse(ServerResponseCode.ERROR,false);
+		}
+
+	}
+
+
+	@PutMapping("updateClassJob")
+	public ServerResponse updateClassJob(@RequestBody Map<String, String> payload) {
+		boolean status = jobService.updateClassJob(payload.get("jobName"), payload.get("startMethod"), payload.get("stopMethod"), payload.get("classPath"), payload.get("parameters"));
+
+		if (status) {
+			return getServerResponse(ServerResponseCode.SUCCESS,true);
+		} else {
+			return getServerResponse(ServerResponseCode.ERROR, false);
+		}
+
 	}
 
 

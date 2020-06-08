@@ -35,7 +35,7 @@ this.dataSource.paginator  = this.paginator;
 
   openDialog(): void {
     const dialogRef = this.dialog.open(NewJobComponent, {
-      width:'675px'
+
 
     });
 
@@ -67,7 +67,13 @@ this.dataSource.paginator  = this.paginator;
 
 
   onUpdate(jobDetails:ConfiguredJob){
-    this.dialog.open(NewJobComponent,{data:jobDetails})
+   const dialogRef = this.dialog.open(NewJobComponent,{data:jobDetails})
+
+    dialogRef.afterClosed().subscribe(result => {
+      this.getConfiguredJobs();
+
+    });
+
   }
 
 

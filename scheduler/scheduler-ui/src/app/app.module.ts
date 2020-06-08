@@ -25,7 +25,9 @@ import {MatTabsModule} from '@angular/material/tabs';
 import {MatPaginatorModule} from "@angular/material/paginator";
 import { ConfigureJobComponent } from './configure-job/configure-job.component';
 import {MatIconModule} from '@angular/material/icon';
-
+import { ChartComponent } from './chart/chart.component';
+import {ChartsModule} from "ng2-charts";
+import {MatCardModule} from '@angular/material/card';
 
 const routes : Routes = [{path:'' ,component : SchedulerComponent },
 
@@ -40,6 +42,7 @@ const routes : Routes = [{path:'' ,component : SchedulerComponent },
     LogtableComponent,
     NewJobComponent,
     ConfigureJobComponent,
+    ChartComponent,
     // SchedulerDropdownComponent
 
   ],
@@ -64,7 +67,9 @@ const routes : Routes = [{path:'' ,component : SchedulerComponent },
     RouterModule.forRoot(routes),
     MatTabsModule,
     MatPaginatorModule,
-    MatIconModule
+    MatIconModule,
+    ChartsModule,
+    MatCardModule
   ],
 
   providers: [SchedulerService,ServerResponseCode,MatRadioModule],

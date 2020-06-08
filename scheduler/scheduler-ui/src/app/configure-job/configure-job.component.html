@@ -41,7 +41,7 @@
 
   <ng-container matColumnDef="Edit">
     <th mat-header-cell *matHeaderCellDef >Edit Job</th>
-    <td mat-cell *matCellDef="let dataSource"><button (click)="onUpdate(dataSource)"  mat-flat-button color="accent"   disabled="true">Update</button> | <button  (click)="delete(dataSource.job_name)"  mat-flat-button color="warn">Delete</button>  </td>
+    <td mat-cell *matCellDef="let dataSource"><button [disabled]="dataSource.status" (click)="onUpdate(dataSource)"  mat-flat-button color="primary" >Update</button> | <button   (click)="delete(dataSource.job_name)"   mat-flat-button [disabled]=dataSource.status color="warn">Delete</button>  </td>
   </ng-container>
 
   <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>

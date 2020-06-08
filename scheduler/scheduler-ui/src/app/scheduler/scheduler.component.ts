@@ -31,6 +31,8 @@ date : Date ;
 // timer subscriptions to get the jobs
 jobRefreshTimerSubscription: Subscription;
 
+jobsTimerSubscription:Subscription;
+
 // getJobsTimerSubsciption : Subscription;
 // job records all the jobs will be assigned to this
 jobRecords = [];
@@ -69,23 +71,28 @@ jobType:boolean=true;
     });
     this.setDate();
     this.getAvailableJobs();
-    let timer_value =timer(2000,3000);
-
+    let timer_value =timer(0,3000);
+     let timer2 = timer(0,10*1000);
     this.jobRefreshTimerSubscription = timer_value.subscribe(t=>{
       this.getJobs();
 
     });
 
-    setInterval(()=>{
+
+    this.jobsTimerSubscription= timer2.subscribe(t=>{
       if(this.isNotPause){
-      this.getAvailableJobs()
+        this.getAvailableJobs()
       }
-    },10*1000);
+    })
+    // setInterval(()=>{
+    //
+    // },10*1000);
   }
 
 
   ngOnDestroy() {
     this.jobRefreshTimerSubscription.unsubscribe();
+    this.jobsTimerSubscription.unsubscribe();
   }
 
 
