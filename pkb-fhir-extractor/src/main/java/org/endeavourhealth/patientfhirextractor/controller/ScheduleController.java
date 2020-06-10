@@ -16,12 +16,39 @@ class ScheduleController {
     PatientService patientService;
 
     @RequestMapping("start")
-    ResponseEntity<Void> start() throws Exception {
-        patientRecordController.setStop(false);
-        patientService.executeProcedures();
-        patientRecordController.publishPatients();
-        return new ResponseEntity<>(HttpStatus.OK);
+    ResponseEntity<Object> start() {
+        try {
+            patientRecordController.setStop(false);
+            patientRecordController.publishPatients();
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<Object>(
+                    e.getCause(), null, HttpStatus.BAD_REQUEST);
+        }
     }
+
+    @RequestMapping("/procedure/cohort/start")
+    ResponseEntity<Object> startCohortProcedure() {
+        try {
+            patientService.executeProcedureCohort();
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(
+                    e.getCause(), null, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @RequestMapping("/procedure/delta/start")
+    ResponseEntity<Object> startDeltaProcedures() {
+        try {
+            patientService.executeProceduresDelta();
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(
+                    e.getCause(), null, HttpStatus.BAD_REQUEST);
+        }
+    }
+
 
     @RequestMapping("stop")
     ResponseEntity<String> stop() {
