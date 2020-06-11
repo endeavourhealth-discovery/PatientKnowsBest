@@ -17,7 +17,7 @@ export class LogtableComponent implements OnInit {
   displayedColumns: String [] = ["job_name", "status", "information", "job_start_time", "job_complete_time"]
   logData = new MatTableDataSource<LogDetails>();
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
-  tableData: LogDetails[];
+
 
   @ViewChild(MatSort, {static: true}) sort: MatSort
   chartData: { Success: number, Failed: number, Interrupted: number };
@@ -30,7 +30,10 @@ export class LogtableComponent implements OnInit {
     this.logData.paginator = this.paginator;
     this.getLog();
     this.logData.filterPredicate =(data:LogDetails,filter:string)=>{
-      if (filter.toLowerCase().trim() == data.status.toLowerCase().trim()){
+      if(filter=='all'){
+        return true;
+      }
+      else if (filter.toLowerCase().trim() == data.status.toLowerCase().trim()){
 
         return true;
       }
@@ -46,7 +49,6 @@ export class LogtableComponent implements OnInit {
     this._schedulerservice.getLogs().subscribe(success => {
       if (success.statusCode == ServerResponseCode.SUCCESS) {
         this.logData.data = success.data;
-        this.tableData = success.data;
         this.reduce(success.data);
       }
     })

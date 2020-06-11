@@ -7,23 +7,23 @@ import {Observable}                         from 'rxjs'
 @Injectable()
 // This is a singleton class used to provide the data for the ui from rest
 export class SchedulerService{
-    getJobsUrl = "http://10.0.101.59:8081/scheduler/jobs";
-    scheduleJobUrl = "http://10.0.101.59:8081/scheduler/schedule";
-    pauseJobUrl = "http://10.0.101.59:8081/scheduler/pause";
-    resumeJobUrl = "http://10.0.101.59:8081/scheduler/resume";
-    deleteJobUrl = "http://10.0.101.59:8081/scheduler/delete";
-    updateJobUrl = "http://10.0.101.59:8081/scheduler/update";
-    isJobWithNamePresentUrl = "http://10.0.101.59:8081/scheduler/checkJobName";
-    stopJobUrl = "http://10.0.101.59:8081/scheduler/stop";
-    startJobNowUrl = "http://10.0.101.59:8081/scheduler/start";
-    AvailableJobs = 'http://10.0.101.59:8081/scheduler/getAvailableJobs';
-    logsUrl = 'http://10.0.101.59:8081/scheduler/getLogs';
-    addHttpJobUrl = 'http://10.0.101.59:8081/scheduler/addHttpJob';
-    postClassJobUrl = 'http://10.0.101.59:8081/scheduler/addClassJob';
-    configuredJobsUrl ='http://10.0.101.59:8081/scheduler/getConfiguredJobs';
-    deleteConfiguredJobUrl = "http://10.0.101.59:8081/scheduler/deleteConfiguredJob";
-    updateHttpJobUrl = "http://10.0.101.59:8081/scheduler/updateHttpJob";
-    updateClassJobUrl = "http://10.0.101.59:8081/scheduler/updateClassJob";
+    getJobsUrl = "http://10.1.101.59:8081/scheduler/jobs";
+    scheduleJobUrl = "http://10.1.101.59:8081/scheduler/schedule";
+    pauseJobUrl = "http://10.1.101.59:8081/scheduler/pause";
+    resumeJobUrl = "http://10.1.101.59:8081/scheduler/resume";
+    deleteJobUrl = "http://10.1.101.59:8081/scheduler/delete";
+    updateJobUrl = "http://10.1.101.59:8081/scheduler/update";
+    isJobWithNamePresentUrl = "http://10.1.101.59:8081/scheduler/checkJobName";
+    stopJobUrl = "http://10.1.101.59:8081/scheduler/stop";
+    startJobNowUrl = "http://10.1.101.59:8081/scheduler/start";
+    AvailableJobs = 'http://10.1.101.59:8081/scheduler/getAvailableJobs';
+    logsUrl = 'http://10.1.101.59:8081/scheduler/getLogs';
+    addHttpJobUrl = 'http://10.1.101.59:8081/scheduler/addHttpJob';
+    postClassJobUrl = 'http://10.1.101.59:8081/scheduler/addClassJob';
+    configuredJobsUrl ='http://10.1.101.59:8081/scheduler/getConfiguredJobs';
+    deleteConfiguredJobUrl = "http://10.1.101.59:8081/scheduler/deleteConfiguredJob";
+    updateHttpJobUrl = "http://10.1.101.59:8081/scheduler/updateHttpJob";
+    updateClassJobUrl = "http://10.1.101.59:8081/scheduler/updateClassJob";
 
 
     constructor(private _http: HttpClient) {

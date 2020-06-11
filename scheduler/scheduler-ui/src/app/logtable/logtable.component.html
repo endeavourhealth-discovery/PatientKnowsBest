@@ -1,3 +1,5 @@
+<script src="../scheduler/scheduler.component.ts"></script>
+<script src="logtable.component.ts"></script>
 <div class="d-flex justify-content-between">
   <span class = 'h3 ml-2' style="margin-top:10px ; margin-bottom: 10px">History:</span>
 </div>
@@ -5,17 +7,20 @@
 <mat-form-field class="ml-2   p-0 my-0">
   <mat-label>Filter</mat-label>
   <mat-select  (selectionChange)="onChange($event)" >
-    <mat-option value="success   ">
-      SUCCESSFUL
+    <mat-option value="all">
+      All
+    </mat-option>
+    <mat-option value="success">
+      Success
     </mat-option>
     <mat-option value="failed">
-      FAILED
+      Failed
     </mat-option>
     <mat-option value="interrupted">
-      INTERRUPTED
+      Interrupted
     </mat-option>
     <mat-option value="interrupt failed">
-      INTERRUPT FAILED
+      Interrupt failed
     </mat-option>
 
   </mat-select>
@@ -71,5 +76,5 @@
 <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
 
 
-  <chart  [dataset]="chartData" [tableData] = 'tableData' ></chart>
+  <chart  [dataset]="chartData"  ></chart>
 

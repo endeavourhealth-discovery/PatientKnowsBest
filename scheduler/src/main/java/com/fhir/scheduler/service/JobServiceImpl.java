@@ -370,9 +370,9 @@ public class JobServiceImpl implements JobService {
             }
         } catch (SchedulerException e) {
             System.out.println("SchedulerException while fetching all jobs. error message :" + e.getMessage());
-            e.printStackTrace();
+
         }catch (Exception e){
-            System.out.println(e);
+            System.out.println(e.getMessage());
         }
         return list;
     }
@@ -382,8 +382,7 @@ public class JobServiceImpl implements JobService {
         Available_jobs job = jobs_repo.getOne(jobName);
 
         if(job.getStop_method()==null && job.getStop_url() == null){
-            System.out.println(job.getStop_method());
-            System.out.println(job.getStop_method());
+
             return false;
         }
 

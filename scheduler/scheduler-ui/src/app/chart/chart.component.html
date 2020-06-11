@@ -1,8 +1,10 @@
+<script src="chart.component.ts"></script>
+<script src="chart.component.spec.ts"></script>
 <script src="../scheduler/scheduler.component.ts"></script>
 <div class="container-fluid">
 <div class="row  justify-content-between">
   <div *ngIf="status"  class="col-4 p-0 m-0 align-self-end" style="width:50% ; height:100%" >
-    <canvas baseChart    (chartClick)="onClick($event)"
+    <canvas baseChart
             [datasets]="barChartData"
             [options]="barChartOptions"
             [labels]="barChartLabels"
@@ -11,34 +13,7 @@
             [colors]=" _lineChartColors">
     </canvas>
   </div>
-  <div  class="align-self-start  p-0 m-0 col-8" style="width:50%; margin-top: 5px">
-    <span class="h4 ">{{_status | uppercase}}</span>
-    <table mat-table [dataSource]="dataSource" style="border: solid black 3px;">
-
-      <ng-container matColumnDef="jobName">
-        <th mat-header-cell *matHeaderCellDef> JobName</th>
-        <td mat-cell *matCellDef="let dataSource"> {{dataSource.jobName}} </td>
-      </ng-container>
-
-
-      <ng-container matColumnDef="Information">
-        <th mat-header-cell *matHeaderCellDef> Information</th>
-        <td mat-cell *matCellDef="let dataSource"> {{dataSource.information}} </td>
-      </ng-container>
-
-
-      <ng-container matColumnDef="startTime">
-        <th mat-header-cell *matHeaderCellDef> Job StartTime</th>
-        <td mat-cell *matCellDef="let dataSource"> {{dataSource.startTime | date : "dd/MM/yyyy HH:mm:ss":"utc"}} </td>
-      </ng-container>
-
-      <tr mat-header-row *matHeaderRowDef="['jobName','Information','startTime']"></tr>
-      <tr mat-row *matRowDef="let row; columns: ['jobName','Information','startTime'];"></tr>
-
-    </table>
-
-  </div>
 </div>
 </div>
-<mat-paginator [pageSizeOptions]="[5,10,15]" showFirstLastButtons></mat-paginator>
+
 

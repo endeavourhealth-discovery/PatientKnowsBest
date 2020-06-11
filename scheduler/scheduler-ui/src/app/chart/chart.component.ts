@@ -14,13 +14,8 @@ export class ChartComponent implements OnInit, OnChanges {
 
   @Input('dataset') data: { Success: number, Failed: number, Interrupted: number,InterruptFailed:number };
 
-  @Input('tableData') tableData: LogDetails [];
+   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
 
-  @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
-
-  dataSource = new MatTableDataSource<{ jobName: String, information: String, startTime: Date }>();
-
-  _status : string ='Success:' ;
 
   public barChartLabels: Label[] = ['Success', 'Failed', 'Interrupted','Interrupt Failed'];
   public barChartType: ChartType = 'bar';
@@ -60,7 +55,7 @@ export class ChartComponent implements OnInit, OnChanges {
 
   ngOnInit(): void {
 
-    this.dataSource.paginator = this.paginator;
+
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -72,43 +67,15 @@ export class ChartComponent implements OnInit, OnChanges {
 
       this.barChartData = [{data: [this.data.Success, this.data.Failed, this.data.Interrupted,this.data.InterruptFailed]}
       ]
-      this.dataSource.data = this.getData('Success');
+
 
     }
 
 
   }
 
-  private getData(statusType: string) {
-    let data: { jobName: String, information: String, startTime: Date } [] = [];
-
-    this.tableData.forEach(i => {
-      if (i.status == statusType) {
-        data.push({jobName: i.job_name, information: i.information, startTime: i.job_start_time})
-      }
-    })
-    return data;
-  }
 
 
-  onClick(event) {
-    // console.log(event)
-    if (event.active.length != 0) {
-      if (event.active[0]._index == 0) {
-        this.dataSource.data = this.getData("Success")
-        this._status = "Success:"
-      } else if (event.active[0]._index == 1) {
-        this.dataSource.data = this.getData("Failed")
-        this._status ="Failed :";
-      } else if (event.active[0]._index == 2) {
-        this.dataSource.data = this.getData("Interrupted");
-        this._status = "Interrupted :"
-      }else if(event.active[0]._index == 3){
-        this.dataSource.data = this.getData("Interrupt failed")
-        this._status = "Interrupt Failed :";
-      }
-    }
 
 
-  }
 }
