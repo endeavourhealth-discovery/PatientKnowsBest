@@ -178,37 +178,6 @@ public class PatientService {
         }
     }
 
-    public void executeProcedures() {
-        logger.info("Entering executeProcedures() method");
-        Session session = null;
-        String dbReferences = exporterProperties.getDbreferences();
-        try {
-
-            session = entityManagerFactory.unwrap(SessionFactory.class).openSession();
-            Transaction txn = session.beginTransaction();
-            session.createSQLQuery("call " + dbReferences + ".initialiseTablesPKB()").executeUpdate();
-            txn.commit();
-            txn =  session.beginTransaction();
-            session.createSQLQuery("call " + dbReferences + ".createCohortforPKB()").executeUpdate();
-            txn.commit();
-            txn =  session.beginTransaction();
-            session.createSQLQuery("call " + dbReferences + ".extractPatientsForPKB()").executeUpdate();
-            txn.commit();
-            txn = session.beginTransaction();
-            session.createSQLQuery("call " + dbReferences + ".extractDeletionsForPKB()").executeUpdate();
-            txn.commit();
-            txn = session.beginTransaction();
-            session.createSQLQuery("call " + dbReferences + ".finaliseExtractForPKB()").executeUpdate();
-            txn.commit();
-            logger.info("End of executeProcedures() method");
-        } catch (Exception ex) {
-            logger.error("", ex.getCause());
-        } finally {
-            session.close();
-        }
-    }
-
-
     public boolean isPatientActive(Long patientId) {
         logger.info("Entering isPatientActive() method");
         Session session = null;
@@ -259,4 +228,41 @@ public class PatientService {
         }
     }
 
+    public void executeProcedureCohort() {
+        logger.info("Entering executeProcedureCohort() method");
+        Session session = null;
+        String dbReferences = exporterProperties.getDbreferences();
+        try {
+            session = entityManagerFactory.unwrap(SessionFactory.class).openSession();
+            Transaction txn = session.beginTransaction();
+            session.createSQLQuery("call " + dbReferences + ".createCohortforPKB()").executeUpdate();
+            txn.commit();
+            logger.info("End of executeProcedureCohort() method");
+        } catch (Exception ex) {
+            logger.error("", ex.getCause());
+        } finally {
+            session.close();
+        }
+    }
+
+    public void executeProceduresDelta() {
+        logger.info("Entering executeProceduresDelta() method");
+        Session session = null;
+        String dbReferences = exporterProperties.getDbreferences();
+        try {
+
+            session = entityManagerFactory.unwrap(SessionFactory.class).openSession();
+            Transaction txn = session.beginTransaction();
+            session.createSQLQuery("call " + dbReferences + ".extractPatientsForPKB()").executeUpdate();
+            txn.commit();
+            txn = session.beginTransaction();
+            session.createSQLQuery("call " + dbReferences + ".PKBPatientDeltaBatched()").executeUpdate();
+            txn.commit();
+            logger.info("End of executeProceduresDelta() method");
+        } catch (Exception ex) {
+            logger.error("", ex.getCause());
+        } finally {
+            session.close();
+        }
+    }
 }
