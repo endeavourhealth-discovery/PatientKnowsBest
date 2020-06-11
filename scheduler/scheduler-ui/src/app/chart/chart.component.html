@@ -1,5 +1,6 @@
-<div class="d-flex flex-row ">
-  <div *ngIf="status" class="d-flex flex-row align-items-end" style="width:50% ; height:100%" >
+<div class="container-fluid">
+<div class="row  justify-content-between">
+  <div *ngIf="status"  class="col-4 p-0 m-0 align-self-end" style="width:50% ; height:100%" >
     <canvas baseChart    (chartClick)="onClick($event)"
             [datasets]="barChartData"
             [options]="barChartOptions"
@@ -9,7 +10,8 @@
             [colors]=" _lineChartColors">
     </canvas>
   </div>
-  <div style="width:50%; margin-top: 5px">
+  <div  class="align-self-start  p-0 m-0 col-8" style="width:50%; margin-top: 5px">
+    <span class="h4 ">{{_status | uppercase}}</span>
     <table mat-table [dataSource]="dataSource" style="border: solid black 3px;">
 
       <ng-container matColumnDef="jobName">
@@ -33,8 +35,9 @@
       <tr mat-row *matRowDef="let row; columns: ['jobName','Information','startTime'];"></tr>
 
     </table>
-    <mat-paginator [pageSizeOptions]="[7]" showFirstLastButtons></mat-paginator>
-  </div>
 
+  </div>
 </div>
+</div>
+<mat-paginator [pageSizeOptions]="[5,10,15]" showFirstLastButtons></mat-paginator>
 

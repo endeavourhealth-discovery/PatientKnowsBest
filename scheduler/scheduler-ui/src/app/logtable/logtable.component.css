@@ -6,6 +6,13 @@ table {
 .mat-header-row .cdk-header-row{
   border: solid #353a40 3px;
 }
+.example-container {
+  height: 400px;
+  overflow: auto;
+}
 
+i:hover{
+  background: transparent;
+}
 
 

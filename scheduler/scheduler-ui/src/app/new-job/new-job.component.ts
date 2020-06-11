@@ -62,14 +62,14 @@ export class NewJobComponent implements OnInit {
         'urlGroup': new FormGroup({
           'jobName': new FormControl({value: this.data.job_name, disabled: true}, Validators.required),
           'startUrl': new FormControl(this.data.start_url, Validators.required),
-          'stopUrl': new FormControl(this.data.stop_url, Validators.required)
+          'stopUrl': new FormControl(this.data.stop_url)
 
         }),
 
         'classGroup': new FormGroup({
           'jobName': new FormControl({value: this.data.job_name, disabled: true}, Validators.required),
           'startMethod': new FormControl(this.data.start_method, Validators.required),
-          'stopMethod': new FormControl(this.data.stop_method, Validators.required),
+          'stopMethod': new FormControl(this.data.stop_method),
           'classPath': new FormControl(this.data.class_path, Validators.required),
           'parameters': new FormControl(this.data.parameters)
         })

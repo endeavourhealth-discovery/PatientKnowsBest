@@ -8,6 +8,7 @@ import {MatRadioButton} from '@angular/material/radio';
 import {MatSnackBar}  from '@angular/material/snack-bar';
 import {MatDialog} from "@angular/material/dialog";
 import {NewJobComponent} from "../new-job/new-job.component";
+import {MessageComponent} from "../message/message.component";
 
 
 @Component({
@@ -48,6 +49,7 @@ jobType:boolean=true;
     private _schedulerService:SchedulerService,
     private _responseCode : ServerResponseCode,
     private  _matSnackBar:MatSnackBar,
+              private _dialog:MatDialog
               ) {
 
    this.jobNameStatus='';
@@ -183,20 +185,25 @@ jobType:boolean=true;
       this._schedulerService.scheduleJob(data).subscribe(
         success => {
             if(success.statusCode == ServerResponseCode.SUCCESS){
-              this._matSnackBar.open("JOb Scheduled Successsfully",'Okay',{duration : 2000,verticalPosition:'bottom'})
+              this._dialog.open(MessageComponent,{data:"Job Scheduled Successsfully",width:'500px'})
               this.jobRecords = success.data;
               this.resetForm();
               this.getAvailableJobs();
 
             }else if(success.statusCode == ServerResponseCode.JOB_WITH_SAME_NAME_EXIST){
-              this._matSnackBar.open("Job with same name exists, Please choose different name.","Okay",{duration:2000});
+
+              this._dialog.open(MessageComponent,{data:"Job with same name exists, Please choose different name.",width:'500px'})
+
 
             }else if(success.statusCode == ServerResponseCode.JOB_NAME_NOT_PRESENT){
-              this._matSnackBar.open("Please select a valid Job ","Okay",{duration:2000});
+              this._dialog.open(MessageComponent,{data:"Please select a valid Job ",width:'500px'})
+
+
             }else if (success.statusCode == ServerResponseCode.JOB_DETAILS_UNKNOWN){
-              this._matSnackBar.open("Please verify the job details ","Okay",{duration:2000});
+              this._dialog.open(MessageComponent,{data:"Please verify the job configuration ",width:'500px'})
+
             }else if(success.statusCode == ServerResponseCode.TIME_ERROR){
-              this._matSnackBar.open("Please Enter A Valid Time  ","Okay",{duration:2000});
+              this._dialog.open(MessageComponent,{data:"Please Enter A Valid Time  ",width:'500px'})
             }
 
             this.isNotPause = true;
@@ -254,19 +261,23 @@ this.schedulerForm.patchValue({
       this._schedulerService.updateJob(data).subscribe(
         success => {
             if(success.statusCode == ServerResponseCode.SUCCESS){
-              this._matSnackBar.open("Job updated successfully.","Okay",{duration:2000});
+              this._dialog.open(MessageComponent,{data:"Job updated successfully.",width:'500px'})
+
               this.resetForm();
 
+
             }else if(success.statusCode == ServerResponseCode.JOB_DOESNT_EXIST){
-              this._matSnackBar.open("Job no longer exist.","Okay",{duration:2000});
+              this._dialog.open(MessageComponent,{data:"Job no longer exist.",width:'500px'})
+
 
             }else if(success.statusCode == ServerResponseCode.JOB_NAME_NOT_PRESENT){
               this._matSnackBar.open("Please provide job name.","Okay",{duration:2000});
             }else if(success.statusCode==ServerResponseCode.TIME_ERROR){
-              this._matSnackBar.open("Please Enter Valid Time To Update","Okay",{duration:2000});
+              this._dialog.open(MessageComponent,{data:"Please Enter Valid Time To Update",width:'500px'})
+
             }
             this.jobRecords = success.data;
-            this.getAvailableJobs();
+          this.getAvailableJobs();
         },
         err => {
           alert("Error while updating job");
@@ -313,19 +324,24 @@ this.schedulerForm.patchValue({
       this._schedulerService.stopJob(data).subscribe(
         success => {
           if(success.statusCode == ServerResponseCode.SUCCESS && success.data == true){
+            this._dialog.open(MessageComponent,{data:"Job Stoppped Successfully",width:'500px'})
 
-            this._matSnackBar.open("Job Stoppped Successfully",'Okay',{duration : 1000,verticalPosition:'bottom'})
-            this.getAvailableJobs();
+
+
 
           }else if(success.data == false){
             if(success.statusCode == ServerResponseCode.JOB_NOT_IN_RUNNING_STATE){
               alert("Job not started, so cannot be stopped.");
 
             }else if(success.statusCode == ServerResponseCode.JOB_ALREADY_IN_RUNNING_STATE){
-              alert("Job already started.");
+              this._dialog.open(MessageComponent,{data:"Job already started.",width:'500px'})
+
+
 
             }else if(success.statusCode == ServerResponseCode.JOB_DOESNT_EXIST){
-              alert("Job no longer exist.");
+              this._dialog.open(MessageComponent,{data:"Job no longer exist.",width:'500px'})
+
+
             }
           }
 
@@ -346,25 +362,28 @@ this.schedulerForm.patchValue({
      this._schedulerService.resumeJob(data).subscribe(
       success => {
         if(success.statusCode == ServerResponseCode.SUCCESS && success.data == true){
-            alert("Job resumed successfully.");
+
+          this._dialog.open(MessageComponent,{data:"Job resumed successfully.",width:'500px'})
 
 
           }else if(success.data == false){
             if(success.statusCode == ServerResponseCode.JOB_NOT_IN_PAUSED_STATE){
-                alert("Job is not in paused state, so cannot be resumed.");
+              this._dialog.open(MessageComponent,{data:"Job is not in paused state, so cannot be resumed.",width:'500px'})
+
+
+
             }
           }
 
           //For updating fresh status of all jobs
-          this.getJobs();
-          this.getAvailableJobs();
+
       },
       err => {
         alert("Error while resuming job");
       });
 
       //For updating fresh status of all jobs
-      this.getJobs();
+
   }
 
 
@@ -375,21 +394,24 @@ this.schedulerForm.patchValue({
       this._schedulerService.pauseJob(data).subscribe(
         success => {
           if(success.statusCode == ServerResponseCode.SUCCESS && success.data == true){
-            alert("Job paused successfully.")
+            this._dialog.open(MessageComponent,{data:"Job paused successfully.",width:'500px'})
+
+
 
           }else if(success.data == false){
             if(success.statusCode == ServerResponseCode.JOB_ALREADY_IN_RUNNING_STATE){
-                alert("Job already started/completed, so cannot be paused.");
+              this._dialog.open(MessageComponent,{data:"Job already started/completed, so cannot be paused.",width:'500px'})
+
             }
           }
-          this.getJobs();
+
         },
         err => {
           alert("Error while pausing job");
         });
 
       //For updating fresh status of all jobs
-      this.getJobs();
+
   }
 
 
@@ -402,17 +424,23 @@ this.schedulerForm.patchValue({
       this._schedulerService.startJobNow(data).subscribe(
         success => {
           if(success.statusCode == ServerResponseCode.SUCCESS && success.data == true){
-            alert("Job started successfully.")
+            this._dialog.open(MessageComponent,{data:"Job started successfully.",width:'500px'})
+
 
           }else if(success.data == false){
             if(success.statusCode == ServerResponseCode.ERROR){
-                alert("Server error while starting job.");
+              this._dialog.open(MessageComponent,{data:"Server error while starting job.",width:'500px'})
+
+
 
             }else if(success.statusCode == ServerResponseCode.JOB_ALREADY_IN_RUNNING_STATE){
-              alert("Job is already started.");
+              this._dialog.open(MessageComponent,{data:"Job is already started.",width:'500px'})
+
 
             }else if(success.statusCode == ServerResponseCode.JOB_DOESNT_EXIST){
-              alert("Job no longer exist.");
+              this._dialog.open(MessageComponent,{data:"Job no longer exist.",width:'500px'})
+
+
             }
           }
 
@@ -435,20 +463,24 @@ this.schedulerForm.patchValue({
     this._schedulerService.deleteJob(data).subscribe(
       success => {
           if(success.statusCode == ServerResponseCode.SUCCESS && success.data == true){
-            alert("Job deleted successfully.");
+            this._dialog.open(MessageComponent,{data:"Job deleted successfully..",width:'500px'})
+
 
           }else if(success.data == false){
             if(success.statusCode == ServerResponseCode.JOB_ALREADY_IN_RUNNING_STATE){
-                alert("Job is already started/completed, so cannot be deleted.");
+              this._dialog.open(MessageComponent,{data:"Job is already started/completed, so cannot be deleted.",width:'500px'})
+
 
             }else if(success.statusCode == ServerResponseCode.JOB_DOESNT_EXIST){
-              alert("Job no longer exist.");
+
+              this._dialog.open(MessageComponent,{data:"Job no longer exist.",width:'500px'})
+
             }
 
           }
 
           //For updating fresh status of all jobs
-          this.getJobs();
+
           this.getAvailableJobs();
           this.resetForm();
 
@@ -469,7 +501,7 @@ this.schedulerForm.patchValue({
       }else{
         alert('Unable to get the available Jobs ');
       }
-      console.log(this.availableJobs)
+      // console.log(this.availableJobs)
 
     })
 

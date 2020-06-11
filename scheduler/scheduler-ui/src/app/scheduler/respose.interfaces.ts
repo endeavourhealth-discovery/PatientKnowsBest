@@ -9,6 +9,7 @@ export interface GetJobs{
         lastFiredTime:Date,
         nextFireTime:Date,
         scheduleTime:Date
+         Stop:Boolean;
     }]
 }
 
