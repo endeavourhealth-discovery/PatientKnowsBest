@@ -62,7 +62,7 @@ class JobUtil {
 	protected static Trigger createCronTrigger(String triggerName, Date startTime, String cronExpression, int misFireInstruction){
 		PersistableCronTriggerFactoryBean factoryBean = new PersistableCronTriggerFactoryBean();
 	    factoryBean.setName(triggerName);
-	    factoryBean.setTimeZone(TimeZone.getTimeZone("Europe/London"));
+	   // factoryBean.setTimeZone(TimeZone.getTimeZone("Europe/London"));
 	    factoryBean.setStartTime(startTime);
 	    factoryBean.setCronExpression(cronExpression);
 	    factoryBean.setMisfireInstruction(misFireInstruction);
