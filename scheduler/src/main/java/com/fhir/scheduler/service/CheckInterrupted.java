@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 @Component
 public class CheckInterrupted {
-    public Map<String,Boolean> interruptedJobs = new HashMap<String,Boolean>();
+    public Map<String,Boolean> interruptedJobs = new HashMap<>();
 
 
     public boolean isJobInterrupted(String JobName){
