@@ -156,11 +156,11 @@ jobType:boolean=true;
       var dateNow = new Date();
       this.schedulerForm.patchValue({
           jobName: "",
-          year: dateNow.getFullYear(),
-          month: dateNow.getMonth() + 1,
-          day: dateNow.getDate(),
-          hour: dateNow.getHours(),
-          minute: dateNow.getMinutes()
+          year: dateNow.getUTCFullYear(),
+          month: dateNow.getUTCMonth() + 1,
+          day: dateNow.getUTCDate(),
+          hour: dateNow.getUTCHours(),
+          minute: dateNow.getUTCMinutes()
         });
       this.jobNameStatus = "";
       this.isEditMode=false;
@@ -216,11 +216,11 @@ jobType:boolean=true;
 
   setDate(){
      this.schedulerForm.patchValue({
-          year:this.date.getFullYear(),
-          month: this.date.getMonth() + 1,
-          day: this.date.getDate(),
-          hour: this.date.getHours(),
-          minute: this.date.getMinutes()
+       year: this.date.getUTCFullYear(),
+       month: this.date.getUTCMonth() + 1,
+       day: this.date.getUTCDate(),
+       hour: this.date.getUTCHours(),
+       minute: this.date.getUTCMinutes()
         })
 
      }
