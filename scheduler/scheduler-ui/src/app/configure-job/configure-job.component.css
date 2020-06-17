@@ -2,5 +2,7 @@ table{
   width: 100%;
   border: solid #353a40 3px;
 }
-
+th.mat-sort-header-sorted {
+  color: black;
+}
 

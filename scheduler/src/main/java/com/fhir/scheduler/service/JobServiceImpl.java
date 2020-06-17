@@ -349,6 +349,7 @@ public class JobServiceImpl implements JobService {
                         String jobState = getJobState(jobName);
                         map.put("jobStatus", jobState);
                     }
+                    map.put("Stop",checkStop(jobName));
 
 					/*					Date currentDate = new Date();
 					if (scheduleTime.compareTo(currentDate) > 0) {
@@ -369,9 +370,23 @@ public class JobServiceImpl implements JobService {
             }
         } catch (SchedulerException e) {
             System.out.println("SchedulerException while fetching all jobs. error message :" + e.getMessage());
-            e.printStackTrace();
+
+        }catch (Exception e){
+            System.out.println(e.getMessage());
         }
         return list;
+    }
+
+    private boolean checkStop(String jobName) {
+
+        Available_jobs job = jobs_repo.getOne(jobName);
+
+        if(job.getStop_method()==null && job.getStop_url() == null){
+
+            return false;
+        }
+
+    return true;
     }
 
     /**
@@ -481,9 +496,9 @@ public class JobServiceImpl implements JobService {
         Available_jobs job = jobs_repo.findAvailable_jobsByJob_name(jobName);
         if (job != null) {
             //check for start url and start url
-            if (job.getStart_url() != null && job.getStop_url() != null) {
+            if (job.getStart_url() != null ) {
                 return true;
-            } else if (job.getClass_path() != null && job.getStop_method() != null && job.getStart_method() != null) {
+            } else if (job.getClass_path() != null && job.getStart_method() != null) {
                 return true;
             } else {
 //               System.out.println(job.);
@@ -535,7 +550,7 @@ public class JobServiceImpl implements JobService {
 
     @Override
     public List<History> getLog() {
-        return history_repo.findAll();
+        return history_repo.getAll();
     }
 
 
@@ -548,7 +563,12 @@ public class JobServiceImpl implements JobService {
             Available_jobs job = new Available_jobs();
             job.setJob_name(jobName.trim().toUpperCase());
             job.setStart_url(startUrl);
-            job.setStop_url(stopUrl);
+            if (stopUrl == ""){
+                job.setStop_url(null);
+            }else{
+                job.setStop_url(stopUrl);
+            }
+
             job.setStatus(false);
             jobs_repo.save(job);
             return true;
@@ -568,7 +588,11 @@ public class JobServiceImpl implements JobService {
             job.setJob_name(jobName.trim().toUpperCase());
             job.setClass_path(classPath.trim());
             job.setStart_method(startmethod.trim());
-            job.setStop_method(stopmethod.trim());
+            if(stopmethod == ""){
+                job.setStop_method(null);
+            }else{
+                job.setStop_method(stopmethod.trim());
+            }
             job.setParameters(parameters.trim());
             job.setStatus(false);
             jobs_repo.save(job);
@@ -599,7 +623,11 @@ public class JobServiceImpl implements JobService {
                 job.setParameters(null);
                 job.setStop_method(null);
                 job.setStart_method(null);
-                job.setStop_url(stopUrl.trim());
+                if (stopUrl == ""){
+                    job.setStop_url(null);
+                }else{
+                    job.setStop_url(stopUrl);
+                }
                 job.setStart_url(startUrl.trim());
                 job.setClass_path(null);
                 jobs_repo.save(job);
@@ -620,7 +648,12 @@ public class JobServiceImpl implements JobService {
             try {
                 Available_jobs job = jobs_repo.getOne(jobName);
                 job.setParameters(parameters);
-                job.setStop_method(stopmethod.trim());
+
+                if(stopmethod == ""){
+                    job.setStop_method(null);
+                }else{
+                    job.setStop_method(stopmethod.trim());
+                }
                 job.setStart_method(startmethod.trim());
                 job.setClass_path(classPath.trim());
                 job.setStop_url(null);

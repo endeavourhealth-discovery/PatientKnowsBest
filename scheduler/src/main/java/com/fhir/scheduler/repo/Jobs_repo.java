@@ -28,4 +28,6 @@ public interface Jobs_repo extends JpaRepository<Available_jobs,String> {
     Integer findByJob_name(String job_name);
 
 
+
+
 }

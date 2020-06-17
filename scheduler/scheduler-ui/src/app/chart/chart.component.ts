@@ -12,17 +12,12 @@ import {MatPaginator} from "@angular/material/paginator";
 })
 export class ChartComponent implements OnInit, OnChanges {
 
-  @Input('dataset') data: { Success: number, Failed: number, Interrupted: number };
+  @Input('dataset') data: { Success: number, Failed: number, Interrupted: number,InterruptFailed:number };
 
-  @Input('tableData') tableData: LogDetails [];
-
-  @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
-
-  dataSource = new MatTableDataSource<{ jobName: String, information: String, startTime: Date }>();
+   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
 
 
-
-  public barChartLabels: Label[] = ['Success', 'Failed', 'Interrupted'];
+  public barChartLabels: Label[] = ['Success', 'Failed', 'Interrupted','Interrupt Failed'];
   public barChartType: ChartType = 'bar';
   public barChartLegend = false;
   public barChartOptions: ChartOptions = {
@@ -30,7 +25,7 @@ export class ChartComponent implements OnInit, OnChanges {
     // We use these empty structures as placeholders for dynamic theming.
     scales: {xAxes: [{}], yAxes: [{ticks: {
 
-          min : 0,
+          min : 0
         }}]},
     plugins: {
       datalabels: {
@@ -41,7 +36,7 @@ export class ChartComponent implements OnInit, OnChanges {
   };
 
    _lineChartColors:Array<any> = [{
-    backgroundColor: ['#28a745','#dc3545','#ffc107'],
+    backgroundColor: ['#28a745','#dc3545','#ffc107','#3ba8b9'],
     borderColor: 'blue',
     pointBackgroundColor: 'black',
     pointBorderColor: 'black',
@@ -60,7 +55,7 @@ export class ChartComponent implements OnInit, OnChanges {
 
   ngOnInit(): void {
 
-    this.dataSource.paginator = this.paginator;
+
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -69,39 +64,18 @@ export class ChartComponent implements OnInit, OnChanges {
     if (this.data) {
       console.log(this.data)
       this.status = true;
-      this.barChartData = [{data: [this.data.Success, this.data.Failed, this.data.Interrupted]}
+
+      this.barChartData = [{data: [this.data.Success, this.data.Failed, this.data.Interrupted,this.data.InterruptFailed]}
       ]
-      this.dataSource.data = this.getData('Success');
+
 
     }
 
 
   }
 
-  private getData(statusType: string) {
-    let data: { jobName: String, information: String, startTime: Date } [] = [];
-
-    this.tableData.forEach(i => {
-      if (i.status == statusType) {
-        data.push({jobName: i.job_name, information: i.information, startTime: i.job_start_time})
-      }
-    })
-    return data;
-  }
 
 
-  onClick(event) {
-    // console.log(event)
-    if (event.active.length != 0) {
-      if (event.active[0]._index == 0) {
-        this.dataSource.data = this.getData("Success")
-      } else if (event.active[0]._index == 1) {
-        this.dataSource.data = this.getData("Failed")
-      } else if (event.active[0]._index == 2) {
-        this.dataSource.data = this.getData("Interrupted");
-      }
-    }
 
 
-  }
 }

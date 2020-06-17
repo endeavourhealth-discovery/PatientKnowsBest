@@ -1,7 +1,11 @@
 
 
-<div class=" mt-2 mb-2 d-flex justify-content-end "><button class="bg-dark" mat-button [ngStyle]="{'color':'RGB(235, 236, 237)'}"  (click)="openDialog()">Configure Job</button></div>
-<table class="ml-5" mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+<!--<div ><button class="bg-dark" mat-button [ngStyle]="{'color':'RGB(235, 236, 237)'}"  >Configure Job</button></div>-->
+<div class=" mt-2  d-flex justify-content-between  align-items-end" ><span class="h3"
+>Configure Job:</span><i matTooltip="Add New Job" matTooltipPosition="left"  (click)="openDialog()"  style="cursor: pointer" class="far mr-2 fa-2x p-1 fa-plus-square"></i></div>
+
+
+<table class="ml-5" mat-table [dataSource]="dataSource" class="mat-elevation-z3">
 
   <ng-container matColumnDef="job_name">
     <th mat-header-cell *matHeaderCellDef> Job Name </th>

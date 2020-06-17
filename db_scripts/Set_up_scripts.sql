@@ -48,7 +48,7 @@ CREATE TABLE IF NOT EXISTS data_extracts_pkb.references (
   KEY ix_references_patient_id (patient_id),
   KEY ix_references_resource (resource)
 );
-
+    
     
 CREATE TABLE IF NOT EXISTS data_extracts_pkb.pkb_org_queue (
   id int(11) DEFAULT NULL,

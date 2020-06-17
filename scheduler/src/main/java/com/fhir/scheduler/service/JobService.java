@@ -12,10 +12,10 @@ import org.springframework.scheduling.quartz.QuartzJobBean;
 public interface JobService {
 	boolean scheduleOneTimeJob(String jobName, Class<? extends QuartzJobBean> jobClass, Date date,String jobType);
 	boolean scheduleCronJob(String jobName, Class<? extends QuartzJobBean> jobClass, Date date, String cronExpression,String jobType);
-
+	
 	boolean updateOneTimeJob(String jobName, Date date);
 	boolean updateCronJob(String jobName, Date date, String cronExpression);
-
+	
 	boolean unScheduleJob(String jobName);
 	boolean deleteJob(String jobName);
 	boolean pauseJob(String jobName);
