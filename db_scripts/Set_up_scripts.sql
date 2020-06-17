@@ -31,13 +31,19 @@ CREATE TABLE IF NOT EXISTS data_extracts_pkb.subscriber_cohort (
 );
     
 CREATE TABLE IF NOT EXISTS data_extracts_pkb.pkbPatients (
-    id BIGINT(20) PRIMARY KEY
+    id BIGINT(20) PRIMARY KEY,
+	organization_id BIGINT(20)
 );
     
 CREATE TABLE IF NOT EXISTS data_extracts_pkb.pkbDeletions (
     record_id BIGINT(20) PRIMARY KEY,
     table_id TINYINT(4)
 );
+
+CREATE TABLE IF NOT EXISTS data_extracts_pkb.pkb_org_queue (
+  id TINYINT(4),
+  organization_id BIGINT(20)
+)
     
     /*  Not needed for phase 1
 	create table if not exists data_extracts_pkb.snomed_code_set (
