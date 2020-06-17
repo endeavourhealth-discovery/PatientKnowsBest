@@ -29,10 +29,34 @@ CREATE TABLE IF NOT EXISTS data_extracts_pkb.subscriber_cohort (
     INDEX ix_cohort_patientId (patientId),
     INDEX ix_cohort_patientId_bulked (patientId , isBulked)
 );
-    
-CREATE TABLE IF NOT EXISTS data_extracts_pkb.pkbPatients (
-    id BIGINT(20) PRIMARY KEY
+
+CREATE TABLE IF NOT EXISTS data_extracts_pkb.references (
+  an_id bigint(20) DEFAULT NULL,
+  strid varchar(255) DEFAULT NULL,
+  resource varchar(255) DEFAULT NULL,
+  organization_id bigint(20) DEFAULT NULL,
+  response varchar(10) DEFAULT NULL,
+  location varchar(100) DEFAULT NULL,
+  datesent datetime NOT NULL,
+  json text,
+  patient_id bigint(20) DEFAULT NULL,
+  type_id tinyint(1) DEFAULT NULL,
+  runguid varchar(50) DEFAULT NULL,
+  KEY ix_references_an_id (an_id),
+  KEY ix_references_strid (strid),
+  KEY ix_references_location (location),
+  KEY ix_references_patient_id (patient_id),
+  KEY ix_references_resource (resource)
 );
+
+    
+CREATE TABLE IF NOT EXISTS data_extracts_pkb.pkb_org_queue (
+  id int(11) DEFAULT NULL,
+  organization_id int(11) DEFAULT NULL
+  );
+  
+
+CREATE TABLE IF NOT EXISTS data_extracts_pkb.pkbPatients (id BIGINT(20) PRIMARY KEY , organization_id BIGINT(20));
     
 CREATE TABLE IF NOT EXISTS data_extracts_pkb.pkbDeletions (
     record_id BIGINT(20) PRIMARY KEY,

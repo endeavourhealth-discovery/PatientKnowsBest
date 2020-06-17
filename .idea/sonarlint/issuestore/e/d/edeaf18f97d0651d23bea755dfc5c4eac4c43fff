@@ -1,0 +1,21 @@
+
+Gsquid:S1148¬"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿ8Ï±¦§.
+`squid:S3457Í"AFormat specifiers should be used instead of string concatenation.(ä··Ü8åşÖí©.
+`squid:S3457­"AFormat specifiers should be used instead of string concatenation.(³ÆïŞ8Ï±¦§.
+isquid:S2259Ä"EA "NullPointerException" could be thrown; "session" is nullable here.(ËÇÇÓûÿÿÿÿ8åşÖí©.
+Fsquid:S1148A"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿ8Ï±¦§.
+isquid:S2259±"EA "NullPointerException" could be thrown; "session" is nullable here.(ËÇÇÓûÿÿÿÿ8Ï±¦§.
+`squid:S3457"AFormat specifiers should be used instead of string concatenation.(ÕÈ´ü8Ï±¦§.
+dsquid:S1192d"FDefine a constant instead of duplicating this literal "join " 5 times.(ìÄ«‰8Ï±¦§.
+asquid:S1155*">Use isEmpty() to check whether the collection is empty or not.(ó¢ø™ÿÿÿÿÿ8Ï±¦§.
+qsquid:S1192"RDefine a constant instead of duplicating this literal "No result for id " 3 times.(ÕÈ´ü8Ï±¦§.
+isquid:S2259‰"EA "NullPointerException" could be thrown; "session" is nullable here.(ËÇÇÓûÿÿÿÿ8åşÖí©.
+isquid:S2259ã"EA "NullPointerException" could be thrown; "session" is nullable here.(ËÇÇÓûÿÿÿÿ8åşÖí©.
+`squid:S3457Á"AFormat specifiers should be used instead of string concatenation.(æ£™È8åşÖí©.
+esquid:S1192î"FDefine a constant instead of duplicating this literal "call " 3 times.(á¤æú8åşÖí©.
+Osquid:S1602r",Remove useless curly braces around statement(¬‘ßåûÿÿÿÿ8Ï±¦§.
+‹squid:S1192"gDefine a constant instead of duplicating this literal "End of getLocationForResource() method" 4 times.(œ›Ö•ûÿÿÿÿ8Ï±¦§.
+isquid:S2259ô"EA "NullPointerException" could be thrown; "session" is nullable here.(ËÇÇÓûÿÿÿÿ8åşÖí©.
+msquid:S1192„"IDefine a constant instead of duplicating this literal "resource" 3 times.(Õ°şûøÿÿÿÿ8Ï±¦§.
+hsquid:S2259D"EA "NullPointerException" could be thrown; "session" is nullable here.(ËÇÇÓûÿÿÿÿ8Ï±¦§.
+ksquid:S2259*"HA "NullPointerException" could be thrown; "patientIds" is nullable here.(ó¢ø™ÿÿÿÿÿ8Ï±¦§.

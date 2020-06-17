@@ -1,0 +1,9 @@
+
+Fsquid:S1148~"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿ8¨¿ŸË§.
+Vsquid:S1135"2Complete the task associated to this TODO comment.(š÷à…üÿÿÿÿ8¨¿ŸË§.
+dsquid:S3457Q"AFormat specifiers should be used instead of string concatenation.(¶¯Ã‰ûÿÿÿÿ8¨¿ŸË§.
+Vsquid:S1135‰"2Complete the task associated to this TODO comment.(¸ˆŠøÿÿÿÿÿ8¨¿ŸË§.
+Psquid:S1481—",Remove this unused "request" local variable.(ß‚Àùÿÿÿÿÿ8¨¿ŸË§.
+Msquid:S5411]"*Use the primitive boolean expression here.(Ô¨’˜üÿÿÿÿ8ğû­Ë§.
+¥%squid:RedundantThrowsDeclarationCheck’"lRemove the declaration of thrown exception 'java.io.IOException', as it cannot be thrown from method's body.(¹£ş8Á¬«Ë§.
+Zsquid:S2629Q"7Use the built-in formatting to construct this argument.(¶¯Ã‰ûÿÿÿÿ8¨¿ŸË§.
