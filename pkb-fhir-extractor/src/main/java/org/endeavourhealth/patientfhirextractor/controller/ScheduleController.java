@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 class ScheduleController {
@@ -16,13 +17,16 @@ class ScheduleController {
     PatientService patientService;
 
     @RequestMapping("start")
-    ResponseEntity<Object> start() {
+    ResponseEntity<Object> start(@RequestParam("queue") String queueId) {
         try {
+            if (queueId == null) {
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
             patientRecordController.setStop(false);
-            patientRecordController.publishPatients();
+            patientRecordController.publishPatients(queueId);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<Object>(
+            return new ResponseEntity<>(
                     e.getCause(), null, HttpStatus.BAD_REQUEST);
         }
     }

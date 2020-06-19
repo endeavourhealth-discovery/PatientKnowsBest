@@ -1,17 +1,22 @@
 package org.endeavourhealth.patientfhirextractor.service;
 
+import ca.uhn.fhir.context.FhirContext;
 import org.apache.commons.lang3.StringUtils;
 import org.endeavourhealth.patientfhirextractor.configuration.ExporterProperties;
 import org.endeavourhealth.patientfhirextractor.constants.AvailableResources;
 import org.endeavourhealth.patientfhirextractor.data.PatientEntity;
 import org.endeavourhealth.patientfhirextractor.data.ReferencesEntity;
+import org.endeavourhealth.patientfhirextractor.resource.MessageHeader;
+import org.endeavourhealth.patientfhirextractor.resource.Patient;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
+import org.hl7.fhir.dstu3.model.Bundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManagerFactory;
@@ -32,12 +37,18 @@ public class PatientService {
     private ReferencesService referencesService;
 
     @Autowired
+    private CreateOrUpdateService createOrUpdateService;
+
+    Patient patient = new Patient();
+    MessageHeader messageHeader = new MessageHeader();
+
+    @Autowired
     @PersistenceUnit
     private EntityManagerFactory entityManagerFactory;
 
-    public Map<Long, PatientEntity> processPatients() {
+    public Map<Long, PatientEntity> processPatients(Integer organizationId) {
         logger.info("Entering processPatients() method");
-        List<String> patientIds = getPatientIds();
+        List<String> patientIds = getPatientIds(organizationId);
         Map<Long, PatientEntity> patientEntities = null;
         if (patientIds.size() > 0) {
             patientEntities = getPatientFull(patientIds);
@@ -46,7 +57,51 @@ public class PatientService {
         return patientEntities;
     }
 
-    private List<String> getPatientIds() {
+    @Async
+    public void patientUpdate(Map<String, String> orgIdList,PatientEntity patientItem, FhirContext ctx) throws Exception {
+        System.out.println("Inside patient update");
+        String patientOrgId = patientItem.getOrglocation();
+        if (orgIdList.get(patientOrgId) == null) {
+            postOrganizationIfNeeded(Long.parseLong(patientOrgId));
+        }
+
+        String patientLocation = getLocationForResource(patientItem.getId(), AvailableResources.PATIENT);
+
+        Bundle bundle = new Bundle();
+        bundle.setType(Bundle.BundleType.MESSAGE);
+
+        bundle.addEntry().setResource(messageHeader.getMessageHeader());
+        org.hl7.fhir.dstu3.model.Patient patientResource = patient.getPatientResource(patientItem, patientLocation, this);
+        boolean update = false;
+        if (patientLocation == null) {
+            patientLocation = patientResource.getId();
+        } else {
+            update = true;
+        }
+        bundle.addEntry().setResource(patientResource);
+        String token = createOrUpdateService.getToken();
+
+        String json = ctx.newJsonParser().setPrettyPrint(true).encodeResourceToString(patientResource);
+        createOrUpdateService.createOrUpdatePatient(String.valueOf(patientItem.getId()), token, json, patientLocation, update, patientItem.getOrglocation());
+    }
+
+    public void postOrganizationIfNeeded(Long organizationId) {
+        logger.info("Entering postOrganizationIfNeeded() method");
+
+        if (organizationId == null) return;
+        boolean organizationExist = resourceExist(organizationId, AvailableResources.ORGANIZATION);
+
+        if (!organizationExist) {
+            //TODO: POST organizaton
+            String url = "http://localhost:8080/fhir/STU3/Organization";
+            referenceEntry(new ReferencesEntity(AvailableResources.ORGANIZATION.toString(), organizationId, url));
+        }
+        //TODO: Add newly organization to reference table
+        logger.info("End of postOrganizationIfNeeded() method");
+    }
+
+
+    private List<String> getPatientIds(Integer organizationId) {
         logger.info("Entering getPatientIds() method");
         String sql;
         String dbSchema = exporterProperties.getDbschema();
@@ -54,8 +109,8 @@ public class PatientService {
         List<String> patientIds = null;
         Session session = null;
         try {
-            if (StringUtils.isNotEmpty(exporterProperties.getOrganization())) {
-                sql = "SELECT p.id FROM " + dbReference + ".pkbPatients pk join " + dbSchema + ".patient p on p.id = pk.id where p.organization_id=" + exporterProperties.getOrganization();
+            if (organizationId != 0) {
+                sql = "SELECT p.id FROM " + dbReference + ".pkbPatients pk join " + dbSchema + ".patient p on p.id = pk.id where p.organization_id=" + organizationId;
             } else {
                 sql = "select * from " + dbReference + ".pkbPatients";
             }
@@ -216,7 +271,7 @@ public class PatientService {
         logger.info("Entering deleteProcessedPatientId() method");
         Session session = null;
         try {
-            String sql = "delete from pkbpatients where id = :id";
+            String sql = "delete from " + exporterProperties.getDbreferences() + "pkbpatients where id = :id";
             session = entityManagerFactory.unwrap(SessionFactory.class).openSession();
             Query q = session.createSQLQuery(sql).addEntity(ReferencesEntity.class);
             q.setParameter("id", patientId);
@@ -264,5 +319,24 @@ public class PatientService {
         } finally {
             session.close();
         }
+    }
+
+
+    public List<Integer> getQueueData(String id) {
+        logger.info("Entering getQueueData() method");
+        Session session = null;
+        List<Integer> organization_ids = null;
+        String dbReferences = exporterProperties.getDbreferences();
+        try {
+            String sql = "select organization_id from " + dbReferences +".pkb_org_queue where id = " + id;
+            session = entityManagerFactory.unwrap(SessionFactory.class).openSession();
+            organization_ids = session.createSQLQuery(sql).list();
+            logger.info("End of getQueueData() method");
+        } catch (Exception ex) {
+            logger.error("", ex.getCause());
+        } finally {
+            session.close();
+        }
+        return organization_ids;
     }
 }
