@@ -6,6 +6,7 @@ import {MatPaginator} from "@angular/material/paginator";
 import {MatTableDataSource} from "@angular/material/table";
 import {Observable} from "rxjs";
 import {MatSort} from "@angular/material/sort";
+import {MatSnackBar} from "@angular/material/snack-bar";
 
 
 @Component({
@@ -18,11 +19,11 @@ export class LogtableComponent implements OnInit {
   logData = new MatTableDataSource<LogDetails>();
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
 
-
+   isSpin :boolean = false ;
   @ViewChild(MatSort, {static: true}) sort: MatSort
   chartData: { Success: number, Failed: number, Interrupted: number };
 
-  constructor(private _schedulerservice: SchedulerService) {
+  constructor(private _schedulerservice: SchedulerService,private snackBar : MatSnackBar) {
   }
 
   ngOnInit(): void {
@@ -50,11 +51,17 @@ export class LogtableComponent implements OnInit {
       if (success.statusCode == ServerResponseCode.SUCCESS) {
         this.logData.data = success.data;
         this.reduce(success.data);
+
       }
+      this.isSpin = false ;
+    },error => {
+      this.snackBar.open("Unknown Error Occurred","Okay",{duration:1000});
+      this.isSpin=false;
     })
   }
 
   onSubmit() {
+    this.isSpin = true ;
     this.getLog();
   }
 
@@ -83,6 +90,7 @@ export class LogtableComponent implements OnInit {
   onChange(value) {
     console.log(value)
     this.logData.filter = value.value;
+    this.paginator.firstPage();
 
   }
 }

@@ -6,9 +6,18 @@ import java.util.List;
 import java.util.Map;
 
 import com.fhir.scheduler.entity.Available_jobs;
+import com.fhir.scheduler.security.service.UserDetailsService;
+import com.fhir.scheduler.security.service.util.AuthenticationRequest;
+import com.fhir.scheduler.security.service.util.AuthenticationResponse;
+import com.fhir.scheduler.security.service.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import com.fhir.scheduler.dto.ServerResponse;
@@ -30,6 +39,41 @@ public class JobController {
 
 	@Autowired
 	Available_jobs jobs;
+
+
+	@Autowired
+	AuthenticationManager manager;
+
+
+	@Autowired
+	UserDetailsService userDetailsService;
+
+	@Autowired
+	JwtUtil jwt;
+
+	@PostMapping(value="authenticate")
+	public AuthenticationResponse authenticate(@RequestBody AuthenticationRequest request) throws Exception {
+
+		try {
+
+			manager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
+
+
+		} catch (BadCredentialsException e) {
+			throw new Exception("Incorrect Username or Password", e);
+		}
+		org.springframework.security.core.userdetails.UserDetails userDetails = userDetailsService.loadUserByUsername(request.getUsername());
+
+//        generate jwt token
+
+		return new AuthenticationResponse(jwt.generateToken(userDetails));
+
+
+
+
+
+
+	}
 
 
 	@RequestMapping("schedule")
@@ -361,9 +405,9 @@ public class JobController {
 	public ServerResponse updateHttpJob(@RequestBody Map<String, String> payload) {
 		boolean status = jobService.updateHttpJob(payload.get("jobName"), payload.get("startUrl"), payload.get("stopUrl"));
 		if (status) {
-			return getServerResponse(ServerResponseCode.SUCCESS,true);
+			return getServerResponse(ServerResponseCode.SUCCESS, true);
 		} else {
-			return getServerResponse(ServerResponseCode.ERROR,false);
+			return getServerResponse(ServerResponseCode.ERROR, false);
 		}
 
 	}
@@ -374,7 +418,7 @@ public class JobController {
 		boolean status = jobService.updateClassJob(payload.get("jobName"), payload.get("startMethod"), payload.get("stopMethod"), payload.get("classPath"), payload.get("parameters"));
 
 		if (status) {
-			return getServerResponse(ServerResponseCode.SUCCESS,true);
+			return getServerResponse(ServerResponseCode.SUCCESS, true);
 		} else {
 			return getServerResponse(ServerResponseCode.ERROR, false);
 		}

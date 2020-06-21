@@ -3,6 +3,7 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
+  serverUrl : 'http://10.0.101.59:8081/scheduler/',
   production: false
 };
 

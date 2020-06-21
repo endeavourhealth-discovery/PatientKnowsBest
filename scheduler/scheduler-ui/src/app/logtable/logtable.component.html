@@ -27,8 +27,9 @@
 
 </mat-form-field>
 
-  <i style="cursor: pointer" (click)="onSubmit()" matTooltip="Refresh" matTooltipPosition="left" class="fas p-2  fa-sync fa-2x "></i>
-
+  <i style="cursor: pointer" (click)="onSubmit()" *ngIf="!isSpin" matTooltip="Refresh" matTooltipPosition="left" class="fas p-2  fa-sync fa-2x "></i>
+<!--  <i *ngIf="isSpin" class="fa p-2 fa-spinner fa-pulse fa-2x fa-fw"></i>-->
+  <i *ngIf="isSpin"  class="fa p-2  fa-2x  fa-refresh fa-spin" ></i>
 </div>
 
 
