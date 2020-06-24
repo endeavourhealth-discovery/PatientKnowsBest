@@ -11,19 +11,15 @@ import org.endeavourhealth.patientfhirextractor.resource.MessageHeader;
 import org.endeavourhealth.patientfhirextractor.resource.Patient;
 import org.endeavourhealth.patientfhirextractor.service.CreateOrUpdateService;
 import org.endeavourhealth.patientfhirextractor.service.PatientService;
-import org.hl7.fhir.dstu3.model.Bundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -66,14 +62,13 @@ public class PatientRecordController {
     }
 
     public void processPatientData(String queueId) throws Exception {
-        logger.info("Entering getUserDetails() method");
+        logger.info("Entering processPatientData() method");
         Map<String, String> orgIdList = new HashMap<>();
-        List<Integer> organizationIds = patientService.getQueueData(queueId);
-
+        List<BigInteger> organizationIds = patientService.getQueueData(queueId);
             while (!getStop()) {
-                for (Integer organizationId : organizationIds) {
-                    Map<Long, PatientEntity> patientEntities = patientService.processPatients(organizationId);
-                    Long patientOrganizationId = Long.valueOf(organizationId);
+                for (BigInteger organizationId : organizationIds) {
+                    Map<Long, PatientEntity> patientEntities = patientService.processPatients(organizationId.longValue());
+                    Long patientOrganizationId = organizationId.longValue();
                     if (CollectionUtils.isEmpty(patientEntities)) {
                         return;
                     }
@@ -89,68 +84,26 @@ public class PatientRecordController {
                     } else {
                         orgIdList.put(String.valueOf(patientOrganizationId), orgLocation);
                     }
-
                     patientService.referenceEntry(new ReferencesEntity("Start" + organizationId, "dum"));
                     try {
                         FhirContext ctx = FhirContext.forDstu3();
-                        String json = null;
-                        int i = 0;
+                       // String json = null;
 
                         for (Map.Entry<Long, PatientEntity> patientData : patientEntities.entrySet()) {
                             if (!getStop()) {
                                  PatientEntity patientItem = patientData.getValue();
-                                if (i > 6) {
-                                    break;
-                                }
-
-                                patientService.patientUpdate(orgIdList, patientItem, ctx);
-                                i = i + 1;
+                            patientService.patientUpdate(orgIdList, patientItem, ctx);
                             } else {
                                 break;
                             }
                         }
                         patientService.referenceEntry(new ReferencesEntity("End" + organizationId, "dum"));
-                        logger.info("End of getUserDetails() method");
-                    } catch (IOException e) {
+                        logger.info("End of processPatientData() method");
+                    }catch (IOException e) {
                         e.printStackTrace();
                     }
                 }
             }
-    }
-
-    @Async
-    public void patientProcessing(Map<String, String> orgIdList, Map<Long, PatientEntity> patientEntities, FhirContext ctx) throws Exception {
-        try {
-            Thread.sleep(15 * 1000);
-            System.out.println("Processing complete");
-        } catch (InterruptedException ie) {
-            logger.error("Error in ProcessServiceImpl.process(): {}", ie.getMessage());
-        }
-           /* Map.Entry<Long, PatientEntity> entry = patientEntities.entrySet().iterator().next();
-            PatientEntity patientItem = entry.getValue();
-            String patientOrgId = patientItem.getOrglocation();
-            if (orgIdList.get(patientOrgId) == null) {
-                postOrganizationIfNeeded(Long.parseLong(patientEntities.get(0).getOrglocation()));
-            }
-
-            String patientLocation = patientService.getLocationForResource(patientItem.getId(), AvailableResources.PATIENT);
-
-            Bundle bundle = new Bundle();
-            bundle.setType(Bundle.BundleType.MESSAGE);
-
-            bundle.addEntry().setResource(messageHeader.getMessageHeader());
-            org.hl7.fhir.dstu3.model.Patient patientResource = patient.getPatientResource(patientItem, patientLocation, patientService);
-            boolean update = false;
-            if (patientLocation == null) {
-                patientLocation = patientResource.getId();
-            } else {
-                update = true;
-            }
-            bundle.addEntry().setResource(patientResource);
-            String token = createOrUpdateService.getToken();
-
-            String json = ctx.newJsonParser().setPrettyPrint(true).encodeResourceToString(patientResource);
-            createOrUpdateService.createOrUpdatePatient(String.valueOf(patientItem.getId()), token, json, patientLocation, update, patientItem.getOrglocation());*/
     }
 
     public void postOrganizationIfNeeded(Long organizationId) {
@@ -166,16 +119,6 @@ public class PatientRecordController {
         }
         //TODO: Add newly organization to reference table
         logger.info("End of postOrganizationIfNeeded() method");
-    }
-
-    public void postBundle(Bundle bundle)
-            throws IOException {
-        FhirContext ctx = FhirContext.forDstu3();
-        String json = ctx.newJsonParser().setPrettyPrint(true).encodeResourceToString(bundle);
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-        HttpEntity<String> request =
-                new HttpEntity<>(json, headers);
     }
 
 

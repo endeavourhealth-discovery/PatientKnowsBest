@@ -8,6 +8,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.annotation.PreDestroy;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 @Controller
 class ScheduleController {
 
@@ -15,6 +19,18 @@ class ScheduleController {
     PatientRecordController patientRecordController;
     @Autowired
     PatientService patientService;
+    private String queueId;
+
+    // Instantiate an executor service
+    //private ExecutorService executor = Executors.newSingleThreadExecutor();
+
+/*
+    @PreDestroy
+    public void shutdown() {
+        // needed to avoid resource leak
+        executor.shutdown();
+    }
+*/
 
     @RequestMapping("start")
     ResponseEntity<Object> start(@RequestParam("queue") String queueId) {
@@ -23,12 +39,28 @@ class ScheduleController {
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
             patientRecordController.setStop(false);
-            patientRecordController.publishPatients(queueId);
+            this.queueId = queueId;
+/*
+            executor.submit(() -> {
+                try {
+*/
+                    processPatient();
+/*
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+*/
+//            });
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (Exception e) {
+            System.out.println("e. getCause : " + e.getMessage());
             return new ResponseEntity<>(
                     e.getCause(), null, HttpStatus.BAD_REQUEST);
         }
+    }
+
+    private void processPatient() throws Exception {
+        patientRecordController.publishPatients(queueId);
     }
 
     @RequestMapping("/procedure/cohort/start")

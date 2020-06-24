@@ -36,12 +36,9 @@ public class CreateOrUpdateService {
     @PersistenceUnit
     private EntityManagerFactory entityManagerFactory;
 
-    @Async
-    public CompletableFuture<Object> createOrUpdatePatient(String patientId, String token, String patientResource, String location, boolean update, String orgId) {
-       return saveOrUpdatePatient(patientId, patientResource, token, location, update, orgId);
+    public void createOrUpdatePatient(String patientId, String token, String patientResource, String location, boolean update, String orgId) {
+        saveOrUpdatePatient(patientId, patientResource, token, location, update, orgId);
     }
-
-
 
 
     public String getToken() {
@@ -67,7 +64,8 @@ public class CreateOrUpdateService {
         return null;
     }
 
-    private CompletableFuture<Object> saveOrUpdatePatient(String patientId, String patientResource, String token, String location, boolean update, String orgId) {
+    private void saveOrUpdatePatient(String patientId, String patientResource, String token, String location, boolean update, String orgId) {
+        logger.info("Entering saveOrUpdatePatient() method");
         final String baseUrl = clientProperties.getBaseUrl() + "Patient";
         try {
             HttpHeaders headers = new HttpHeaders();
@@ -84,14 +82,11 @@ public class CreateOrUpdateService {
             } else {
                 referencesService.saveReference(patientId, patientResource, location, String.valueOf(response.getStatusCodeValue()), orgId, entityManagerFactory);
             }
-            System.out.println("Processed");
-            return CompletableFuture.completedFuture(response.getBody());
 
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            logger.error("Problem in save or update" + e.getMessage());
         }
 
-        return null;
     }
 
 

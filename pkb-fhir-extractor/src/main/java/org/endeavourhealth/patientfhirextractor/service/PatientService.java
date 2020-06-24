@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceUnit;
+import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,7 +47,7 @@ public class PatientService {
     @PersistenceUnit
     private EntityManagerFactory entityManagerFactory;
 
-    public Map<Long, PatientEntity> processPatients(Integer organizationId) {
+    public Map<Long, PatientEntity> processPatients(Long organizationId) {
         logger.info("Entering processPatients() method");
         List<String> patientIds = getPatientIds(organizationId);
         Map<Long, PatientEntity> patientEntities = null;
@@ -59,7 +60,7 @@ public class PatientService {
 
     @Async
     public void patientUpdate(Map<String, String> orgIdList,PatientEntity patientItem, FhirContext ctx) throws Exception {
-        System.out.println("Inside patient update");
+        logger.info("Entering patientUpdate() method");
         String patientOrgId = patientItem.getOrglocation();
         if (orgIdList.get(patientOrgId) == null) {
             postOrganizationIfNeeded(Long.parseLong(patientOrgId));
@@ -83,6 +84,7 @@ public class PatientService {
 
         String json = ctx.newJsonParser().setPrettyPrint(true).encodeResourceToString(patientResource);
         createOrUpdateService.createOrUpdatePatient(String.valueOf(patientItem.getId()), token, json, patientLocation, update, patientItem.getOrglocation());
+        logger.info("End of patientUpdate() method");
     }
 
     public void postOrganizationIfNeeded(Long organizationId) {
@@ -101,7 +103,7 @@ public class PatientService {
     }
 
 
-    private List<String> getPatientIds(Integer organizationId) {
+    private List<String> getPatientIds(Long organizationId) {
         logger.info("Entering getPatientIds() method");
         String sql;
         String dbSchema = exporterProperties.getDbschema();
@@ -261,26 +263,10 @@ public class PatientService {
             return false;
         }
         if (referencesEntity.getAn_id() > 0) {
-            deleteProcessedPatientId(referencesEntity.getAn_id());
+            referencesService.deleteProcessedPatientId(referencesEntity.getAn_id(), entityManagerFactory);
         }
         logger.info("End of referenceEntry() method");
         return true;
-    }
-
-    public void deleteProcessedPatientId(Long patientId) {
-        logger.info("Entering deleteProcessedPatientId() method");
-        Session session = null;
-        try {
-            String sql = "delete from " + exporterProperties.getDbreferences() + "pkbpatients where id = :id";
-            session = entityManagerFactory.unwrap(SessionFactory.class).openSession();
-            Query q = session.createSQLQuery(sql).addEntity(ReferencesEntity.class);
-            q.setParameter("id", patientId);
-            logger.info("End of deleteProcessedPatientId() method");
-        } catch (Exception ex) {
-            logger.error("", ex.getCause());
-        } finally {
-            session.close();
-        }
     }
 
     public void executeProcedureCohort() {
@@ -322,10 +308,10 @@ public class PatientService {
     }
 
 
-    public List<Integer> getQueueData(String id) {
-        logger.info("Entering getQueueData() method");
+    public List<BigInteger> getQueueData(String id) {
+        logger.info("Entering getQueueData() big integer method");
         Session session = null;
-        List<Integer> organization_ids = null;
+        List<BigInteger> organization_ids = null;
         String dbReferences = exporterProperties.getDbreferences();
         try {
             String sql = "select organization_id from " + dbReferences +".pkb_org_queue where id = " + id;
