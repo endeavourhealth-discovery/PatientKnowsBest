@@ -1,51 +1,56 @@
-
-
 <!--<div ><button class="bg-dark" mat-button [ngStyle]="{'color':'RGB(235, 236, 237)'}"  >Configure Job</button></div>-->
-<div class=" mt-2  d-flex justify-content-between  align-items-end" ><span class="h3"
->Configure Job:</span><i matTooltip="Add New Job" matTooltipPosition="left"  (click)="openDialog()"  style="cursor: pointer" class="far mr-2 fa-2x p-1 fa-plus-square"></i></div>
+<div class=" mt-2  d-flex justify-content-between  align-items-end"><span class="h3"
+>Configure Job:</span><i matTooltip="Add New Job" matTooltipPosition="left" (click)="openDialog()"
+                         style="cursor: pointer" class="far mr-2 fa-2x p-1 fa-plus-square"></i></div>
 
 
 <table class="ml-5" mat-table [dataSource]="dataSource" class="mat-elevation-z3">
 
   <ng-container matColumnDef="job_name">
-    <th mat-header-cell *matHeaderCellDef> Job Name </th>
+    <th mat-header-cell *matHeaderCellDef> Job Name</th>
     <td mat-cell *matCellDef="let dataSource"> {{dataSource.job_name}} </td>
   </ng-container>
 
 
   <ng-container matColumnDef="class_name">
-    <th mat-header-cell *matHeaderCellDef> Class Name </th>
+    <th mat-header-cell *matHeaderCellDef> Class Name</th>
     <td mat-cell *matCellDef="let dataSource"> {{dataSource.class_path == null ? '-' : dataSource.class_path}} </td>
   </ng-container>
 
   <ng-container matColumnDef="start_method">
-    <th mat-header-cell *matHeaderCellDef> Start Method </th>
+    <th mat-header-cell *matHeaderCellDef> Start Method</th>
     <td mat-cell *matCellDef="let dataSource"> {{dataSource.start_method == null ? '-' : dataSource.start_method}} </td>
   </ng-container>
 
   <ng-container matColumnDef="stop_method">
-    <th mat-header-cell *matHeaderCellDef> Stop Method </th>
+    <th mat-header-cell *matHeaderCellDef> Stop Method</th>
     <td mat-cell *matCellDef="let dataSource"> {{dataSource.stop_method == null ? '-' : dataSource.stop_method}} </td>
   </ng-container>
 
   <ng-container matColumnDef="parameters">
-    <th mat-header-cell *matHeaderCellDef> Parameters </th>
+    <th mat-header-cell *matHeaderCellDef> Parameters</th>
     <td mat-cell *matCellDef="let dataSource"> {{dataSource.parameter == null ? '-' : dataSource.parameter}} </td>
   </ng-container>
 
   <ng-container matColumnDef="start_url">
-    <th mat-header-cell *matHeaderCellDef> Start Url </th>
+    <th mat-header-cell *matHeaderCellDef> Start Url</th>
     <td mat-cell *matCellDef="let dataSource"> {{dataSource.start_url == null ? '-' : dataSource.start_url }} </td>
   </ng-container>
 
   <ng-container matColumnDef="stop_url">
-    <th mat-header-cell *matHeaderCellDef> Stop Url </th>
+    <th mat-header-cell *matHeaderCellDef> Stop Url</th>
     <td mat-cell *matCellDef="let dataSource"> {{dataSource.stop_url == null ? '-' : dataSource.stop_url}} </td>
   </ng-container>
 
   <ng-container matColumnDef="Edit">
-    <th mat-header-cell *matHeaderCellDef >Edit Job</th>
-    <td mat-cell *matCellDef="let dataSource"><button [disabled]="dataSource.status" (click)="onUpdate(dataSource)"  mat-flat-button color="primary" >Update</button> | <button   (click)="delete(dataSource.job_name)"   mat-flat-button [disabled]=dataSource.status color="warn">Delete</button>  </td>
+    <th mat-header-cell *matHeaderCellDef>Edit Job</th>
+    <td mat-cell *matCellDef="let dataSource">
+      <button [disabled]="dataSource.status" (click)="onUpdate(dataSource)" mat-flat-button color="primary">Update
+      </button>
+      |
+      <button (click)="delete(dataSource.job_name)" mat-flat-button [disabled]=dataSource.status color="warn">Delete
+      </button>
+    </td>
   </ng-container>
 
   <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>

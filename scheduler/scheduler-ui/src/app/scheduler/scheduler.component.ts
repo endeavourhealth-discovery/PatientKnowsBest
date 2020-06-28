@@ -32,6 +32,8 @@ date : Date ;
 // timer subscriptions to get the jobs
 jobRefreshTimerSubscription: Subscription;
 
+isSpin = false;
+
 jobsTimerSubscription:Subscription;
 
 // getJobsTimerSubsciption : Subscription;
@@ -73,12 +75,9 @@ jobType:boolean=true;
     });
     this.setDate();
     this.getAvailableJobs();
-    let timer_value =timer(0,3000);
-     let timer2 = timer(0,10*1000);
-    this.jobRefreshTimerSubscription = timer_value.subscribe(t=>{
-      this.getJobs();
 
-    });
+     let timer2 = timer(0,10*1000);
+    this.getJobs();
 
 
     this.jobsTimerSubscription= timer2.subscribe(t=>{
@@ -86,14 +85,11 @@ jobType:boolean=true;
         this.getAvailableJobs()
       }
     })
-    // setInterval(()=>{
-    //
-    // },10*1000);
+
   }
 
 
   ngOnDestroy() {
-    this.jobRefreshTimerSubscription.unsubscribe();
     this.jobsTimerSubscription.unsubscribe();
   }
 
@@ -102,7 +98,7 @@ jobType:boolean=true;
 
 /***Gets all the schduled jobs  */
   getJobs(){
-    {
+     this.isSpin = true;
       this._schedulerService.getJobs().subscribe(
         success => {
             if(success.statusCode == ServerResponseCode.SUCCESS){
@@ -110,12 +106,15 @@ jobType:boolean=true;
 
             }else{
               alert("Some error while fetching jobs");
+
             }
+          this.isSpin=false;
         },
         err => {
           this._matSnackBar.open("Error while getting all jobs",'Okay',{duration : 1000,verticalPosition:'bottom',  panelClass: 'blue-snackbar'})
+          this.isSpin=false;
         });
-    }
+
 
 
   }
@@ -531,6 +530,10 @@ this.schedulerForm.patchValue({
 
     onSubmit(){
     console.log(this.schedulerForm)
+    }
+
+    onRefresh(){
+    this.getJobs();
     }
 
 

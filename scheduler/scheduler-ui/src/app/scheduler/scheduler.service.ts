@@ -18,7 +18,6 @@ export class SchedulerService {
   deleteJobUrl = "delete";
   updateJobUrl = "update";
   isJobWithNamePresentUrl = "checkJobName";
-
   stopJobUrl = "stop";
   startJobNowUrl = "start";
   AvailableJobs = 'getAvailableJobs';

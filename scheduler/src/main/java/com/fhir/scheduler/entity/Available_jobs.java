@@ -1,5 +1,6 @@
 package com.fhir.scheduler.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.Entity;
@@ -7,6 +8,7 @@ import javax.persistence.Id;
 
 @Entity
 @Component
+//@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Available_jobs {
 
     @Id

@@ -1,0 +1,30 @@
+Manifest-Version: 1.0
+Main-Class: 
+Class-Path: tomcat-embed-el-8.5.20.jar spring-expression-4.3.11.RELEASE.
+ jar tomcat-jdbc-8.5.20.jar spring-boot-1.5.7.RELEASE.jar spring-data-co
+ mmons-1.13.7.RELEASE.jar spring-data-jpa-1.11.7.RELEASE.jar c3p0-0.9.1.
+ 1.jar spring-boot-starter-tomcat-1.5.7.RELEASE.jar hibernate-core-5.0.1
+ 2.Final.jar antlr-2.7.7.jar logback-classic-1.1.11.jar spring-boot-star
+ ter-jdbc-1.5.7.RELEASE.jar logback-core-1.1.11.jar jandex-2.0.0.Final.j
+ ar spring-boot-autoconfigure-1.5.7.RELEASE.jar dom4j-1.6.1.jar hibernat
+ e-entitymanager-5.0.12.Final.jar hibernate-jpa-2.1-api-1.0.0.Final.jar 
+ spring-context-support-4.3.11.RELEASE.jar jcl-over-slf4j-1.7.25.jar qua
+ rtz-jobs-2.2.3.jar jackson-core-2.8.10.jar quartz-2.2.3.jar jackson-ann
+ otations-2.8.0.jar spring-boot-starter-aop-1.5.7.RELEASE.jar slf4j-api-
+ 1.7.25.jar classmate-1.3.4.jar tomcat-juli-8.5.20.jar snakeyaml-1.17.ja
+ r spring-aspects-4.3.11.RELEASE.jar Pkb_project.jar spring-boot-starter
+ -logging-1.5.7.RELEASE.jar tomcat-embed-core-8.5.20.jar c3p0-0.9.5.2.ja
+ r hibernate-commons-annotations-5.0.1.Final.jar mchange-commons-java-0.
+ 2.11.jar joda-time-2.9.4.jar spring-jdbc-4.3.11.RELEASE.jar spring-core
+ -4.3.11.RELEASE.jar Pkb_project.jar spring-boot-starter-1.5.7.RELEASE.j
+ ar javassist-3.21.0-GA.jar spring-beans-4.3.11.RELEASE.jar spring-webmv
+ c-4.3.11.RELEASE.jar aspectjweaver-1.8.10.jar jackson-databind-2.8.10.j
+ ar protobuf-java-3.6.1.jar spring-web-4.3.11.RELEASE.jar tomcat-embed-w
+ ebsocket-8.5.20.jar javax.transaction-api-1.2.jar spring-context-4.3.11
+ .RELEASE.jar mysql-connector-java-8.0.20.jar jul-to-slf4j-1.7.25.jar sp
+ ring-tx-4.3.11.RELEASE.jar spring-aop-4.3.11.RELEASE.jar hibernate-vali
+ dator-5.3.5.Final.jar log4j-over-slf4j-1.7.25.jar spring-orm-4.3.11.REL
+ EASE.jar spring-boot-starter-data-jpa-1.5.7.RELEASE.jar validation-api-
+ 1.1.0.Final.jar spring-boot-starter-web-1.5.7.RELEASE.jar jboss-logging
+ -3.3.1.Final.jar
+

@@ -4,7 +4,6 @@ package com.fhir.scheduler.job;
 import com.fhir.scheduler.entity.Available_jobs;
 import com.fhir.scheduler.repo.Jobs_repo;
 import com.fhir.scheduler.util.JobResponseCode;
-import org.apache.coyote.Response;
 import org.quartz.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +16,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-
+@DisallowConcurrentExecution
 public class SimpleJob extends QuartzJobBean implements InterruptableJob {
 
     JobExecutionContext jobExecutionContext_;
@@ -126,7 +125,7 @@ public class SimpleJob extends QuartzJobBean implements InterruptableJob {
 
 
             myClass = classLoader.loadClass(job.getClass_path());
-            instance = myClass.newInstance();
+            instance = myClass.getConstructor().newInstance();
 
             Method method = myClass.getMethod(job.getStart_method(), new Class[]{String.class});
 
@@ -166,7 +165,7 @@ public class SimpleJob extends QuartzJobBean implements InterruptableJob {
         try {
             job = repo.findAvailable_jobsByJob_name(jobName);
             myClass = classLoader.loadClass(job.getClass_path());
-            instance = myClass.newInstance();
+            instance = myClass.getConstructor().newInstance();
 
             Method method = myClass.getMethod(job.getStart_method());
 

@@ -197,7 +197,9 @@
       <br/>
       3. If job is in "RUNNING" state then no action like "Pause, Resume, Delete, Edit" is allowed. </label>
     <br/><br/>
-    <label><h4>Schedule List:</h4></label>
+    <div class="d-flex justify-content-between"><label><h4>Schedule List:</h4></label>  <i style="cursor: pointer" (click)="onRefresh()" *ngIf="!isSpin" matTooltip="Refresh" matTooltipPosition="left" class="fas p-2  fa-sync fa-2x ">   <i *ngIf="isSpin"  class="fa p-2  fa-2x  fa-refresh fa-spin" ></i>
+    </i>
+    </div>
     <!-- <hr style="width: 100px; margin-top: 0px; margin-bottom: 0px; margin-left: 0px;color: black; border-top:5px ;"> -->
     <table class="table  table-hover" border="4" style="width : 100%;">
       <thead>

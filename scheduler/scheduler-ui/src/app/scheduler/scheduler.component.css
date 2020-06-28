@@ -1,9 +1,9 @@
 ::ng-deep .blue-snackbar {
-    background: rgb(17, 17, 17);
-    color: rgb(220, 238, 253);
-    width: 200px;
-  }
+  background: rgb(17, 17, 17);
+  color: rgb(220, 238, 253);
+  width: 200px;
+}
 
-.ng-touched .ng-invalid{
+.ng-touched .ng-invalid {
   border: solid 2px #d91d1d;
 }

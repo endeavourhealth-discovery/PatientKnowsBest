@@ -2,18 +2,18 @@
 <script src="chart.component.spec.ts"></script>
 <script src="../scheduler/scheduler.component.ts"></script>
 <div class="container-fluid">
-<div class="row  justify-content-between">
-  <div *ngIf="status"  class="col-4 p-0 m-0 align-self-end" style="width:50% ; height:100%" >
-    <canvas baseChart
-            [datasets]="barChartData"
-            [options]="barChartOptions"
-            [labels]="barChartLabels"
-            [legend]="barChartLegend"
-            [chartType]="barChartType"
-            [colors]=" _lineChartColors">
-    </canvas>
+  <div class="row  justify-content-between">
+    <div *ngIf="status" class="col-4 p-0 m-0 align-self-end" style="width:50% ; height:100%">
+      <canvas baseChart
+              [datasets]="barChartData"
+              [options]="barChartOptions"
+              [labels]="barChartLabels"
+              [legend]="barChartLegend"
+              [chartType]="barChartType"
+              [colors]=" _lineChartColors">
+      </canvas>
+    </div>
   </div>
-</div>
 </div>
 
 

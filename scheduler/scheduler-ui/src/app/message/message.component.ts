@@ -9,19 +9,20 @@ import {ConfiguredJob} from "../scheduler/respose.interfaces";
 })
 export class MessageComponent implements OnInit {
 
-  message : String;
+  message: String;
 
-  constructor(  @Inject(MAT_DIALOG_DATA) public data: String,
-                public dialogRef: MatDialogRef<MessageComponent>,
-              ) { }
+  constructor(@Inject(MAT_DIALOG_DATA) public data: String,
+              public dialogRef: MatDialogRef<MessageComponent>,
+  ) {
+  }
 
   ngOnInit(): void {
 
-  this.message = this.data;
+    this.message = this.data;
   }
 
-onClick(){
+  onClick() {
     this.dialogRef.close();
-}
+  }
 
 }

@@ -12,21 +12,25 @@ import {MatPaginator} from "@angular/material/paginator";
 })
 export class ChartComponent implements OnInit, OnChanges {
 
-  @Input('dataset') data: { Success: number, Failed: number, Interrupted: number,InterruptFailed:number };
+  @Input('dataset') data: { Success: number, Failed: number, Interrupted: number, InterruptFailed: number };
 
-   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
+  @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
 
 
-  public barChartLabels: Label[] = ['Success', 'Failed', 'Interrupted','Interrupt Failed'];
+  public barChartLabels: Label[] = ['Success', 'Failed', 'Interrupted', 'Interrupt Failed'];
   public barChartType: ChartType = 'bar';
   public barChartLegend = false;
   public barChartOptions: ChartOptions = {
     responsive: true,
     // We use these empty structures as placeholders for dynamic theming.
-    scales: {xAxes: [{}], yAxes: [{ticks: {
+    scales: {
+      xAxes: [{}], yAxes: [{
+        ticks: {
 
-          min : 0
-        }}]},
+          min: 0
+        }
+      }]
+    },
     plugins: {
       datalabels: {
         anchor: 'end',
@@ -35,15 +39,15 @@ export class ChartComponent implements OnInit, OnChanges {
     }
   };
 
-   _lineChartColors:Array<any> = [{
-    backgroundColor: ['#28a745','#dc3545','#ffc107','#3ba8b9'],
+  _lineChartColors: Array<any> = [{
+    backgroundColor: ['#28a745', '#dc3545', '#ffc107', '#3ba8b9'],
     borderColor: 'blue',
     pointBackgroundColor: 'black',
     pointBorderColor: 'black',
     pointHoverBackgroundColor: 'red',
     pointHoverBorderColor: 'red'
   },
-];
+  ];
 
 
   public barChartData: ChartDataSets[];
@@ -65,7 +69,7 @@ export class ChartComponent implements OnInit, OnChanges {
       console.log(this.data)
       this.status = true;
 
-      this.barChartData = [{data: [this.data.Success, this.data.Failed, this.data.Interrupted,this.data.InterruptFailed]}
+      this.barChartData = [{data: [this.data.Success, this.data.Failed, this.data.Interrupted, this.data.InterruptFailed]}
       ]
 
 
@@ -73,9 +77,6 @@ export class ChartComponent implements OnInit, OnChanges {
 
 
   }
-
-
-
 
 
 }
