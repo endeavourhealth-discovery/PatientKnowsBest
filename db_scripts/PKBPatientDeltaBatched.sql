@@ -1,8 +1,4 @@
-USE data_extracts_pkb;
-DROP PROCEDURE IF EXISTS PKBPatientDeltaBatched;
-DELIMITER //
-CREATE PROCEDURE PKBPatientDeltaBatched()
-
+CREATE DEFINER=`endeavour`@`%` PROCEDURE `PKBPatientDeltaBatched`()
 BEGIN
 	/*  
 		This procedure loops down 10 minutes of the event log at a time since it was last run.
@@ -203,5 +199,4 @@ BEGIN
    
 	END WHILE processLoop;
          
-END//
-DELIMITER ;
+END
