@@ -1,8 +1,4 @@
-USE data_extracts_pkb;
-DROP PROCEDURE IF EXISTS createCohortForPKB;
-DELIMITER //
-CREATE PROCEDURE createCohortForPKB()
-
+CREATE DEFINER=`endeavour`@`%` PROCEDURE `createCohortForPKB`()
 BEGIN
 
     /*  
@@ -33,7 +29,8 @@ BEGIN
 	DROP TABLE IF EXISTS data_extracts_pkb.cohortDelta;  
 	
 	CREATE TEMPORARY TABLE data_extracts_pkb.cohortDelta (
-	 patient_id BIGINT
+	 patient_id BIGINT,
+	 organization_id BIGINT
 	);
 	
     insert into data_extracts_pkb.bulkProcessingTiming
@@ -70,7 +67,8 @@ BEGIN
 			-- get all valid registered patients for this org
 			insert ignore into data_extracts_pkb.cohortDelta
 			SELECT DISTINCT 
-				   p.id AS patient_id
+				   p.id AS patient_id,
+                   p.organization_id as organization_id
 			FROM subscriber_pi_pkb.patient p 
 			JOIN subscriber_pi_pkb.episode_of_care e ON e.patient_id = p.id 
 			JOIN subscriber_pi_pkb.concept eocc ON eocc.dbid = e.registration_type_concept_id 
@@ -96,7 +94,7 @@ BEGIN
 	
 		 -- insert all patients into the subscriber_cohort table if they are not there already setting the bulk flag to 0
 		insert ignore into data_extracts_pkb.subscriber_cohort
-		select 2, patient_id, 0, 0 from cohortDelta;
+		select 2, patient_id, 0, 0 ,organization_id from cohortDelta;
 		
 		set endTime = (now());
 			
@@ -117,5 +115,4 @@ BEGIN
 	
 	drop table if exists data_extracts_pkb.cohortDelta;
    
-END//
-DELIMITER ;
+END
