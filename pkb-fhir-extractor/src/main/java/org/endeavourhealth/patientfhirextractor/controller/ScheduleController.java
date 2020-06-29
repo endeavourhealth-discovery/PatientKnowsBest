@@ -33,7 +33,7 @@ class ScheduleController {
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(
-                    e.getCause(), null, HttpStatus.BAD_REQUEST);
+                    e.getCause(), null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -48,7 +48,7 @@ class ScheduleController {
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(
-                    e.getCause(), null, HttpStatus.BAD_REQUEST);
+                    e.getCause(), null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -59,7 +59,7 @@ class ScheduleController {
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(
-                    e.getCause(), null, HttpStatus.BAD_REQUEST);
+                    e.getCause(), null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
