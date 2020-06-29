@@ -21,17 +21,6 @@ class ScheduleController {
     PatientService patientService;
     private String queueId;
 
-    // Instantiate an executor service
-    //private ExecutorService executor = Executors.newSingleThreadExecutor();
-
-/*
-    @PreDestroy
-    public void shutdown() {
-        // needed to avoid resource leak
-        executor.shutdown();
-    }
-*/
-
     @RequestMapping("start")
     ResponseEntity<Object> start(@RequestParam("queue") String queueId) {
         try {
@@ -40,20 +29,9 @@ class ScheduleController {
             }
             patientRecordController.setStop(false);
             this.queueId = queueId;
-/*
-            executor.submit(() -> {
-                try {
-*/
-                    processPatient();
-/*
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-*/
-//            });
+            processPatient();
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (Exception e) {
-            System.out.println("e. getCause : " + e.getMessage());
             return new ResponseEntity<>(
                     e.getCause(), null, HttpStatus.BAD_REQUEST);
         }
