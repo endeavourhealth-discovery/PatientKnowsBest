@@ -65,45 +65,43 @@ public class PatientRecordController {
         logger.info("Entering processPatientData() method");
         Map<String, String> orgIdList = new HashMap<>();
         List<BigInteger> organizationIds = patientService.getQueueData(queueId);
-            while (!getStop()) {
-                for (BigInteger organizationId : organizationIds) {
-                    Map<Long, PatientEntity> patientEntities = patientService.processPatients(organizationId.longValue());
-                    Long patientOrganizationId = organizationId.longValue();
-                    if (CollectionUtils.isEmpty(patientEntities)) {
-                        return;
-                    }
+        for (BigInteger organizationId : organizationIds) {
+            Map<Long, PatientEntity> patientEntities = patientService.processPatients(organizationId.longValue());
+            Long patientOrganizationId = organizationId.longValue();
+            if (CollectionUtils.isEmpty(patientEntities)) {
+                return;
+            }
 
-                    postOrganizationIfNeeded(patientOrganizationId);
-                    patient = new Patient();
-                    messageHeader = new MessageHeader();
+            postOrganizationIfNeeded(patientOrganizationId);
+            patient = new Patient();
+            messageHeader = new MessageHeader();
 
-                    String orgLocation = patientService.getLocationForResource(patientOrganizationId, AvailableResources.ORGANIZATION);
-                    if (StringUtils.isEmpty(orgLocation)) {
-                        logger.info("Organization location empty " + orgLocation);
-                        return;
+            String orgLocation = patientService.getLocationForResource(patientOrganizationId, AvailableResources.ORGANIZATION);
+            if (StringUtils.isEmpty(orgLocation)) {
+                logger.info("Organization location empty " + orgLocation);
+                return;
+            } else {
+                orgIdList.put(String.valueOf(patientOrganizationId), orgLocation);
+            }
+            patientService.referenceEntry(new ReferencesEntity("Start" + organizationId, "dum"));
+            try {
+                FhirContext ctx = FhirContext.forDstu3();
+                // String json = null;
+
+                for (Map.Entry<Long, PatientEntity> patientData : patientEntities.entrySet()) {
+                    if (!getStop()) {
+                        PatientEntity patientItem = patientData.getValue();
+                        patientService.patientUpdate(orgIdList, patientItem, ctx);
                     } else {
-                        orgIdList.put(String.valueOf(patientOrganizationId), orgLocation);
-                    }
-                    patientService.referenceEntry(new ReferencesEntity("Start" + organizationId, "dum"));
-                    try {
-                        FhirContext ctx = FhirContext.forDstu3();
-                       // String json = null;
-
-                        for (Map.Entry<Long, PatientEntity> patientData : patientEntities.entrySet()) {
-                            if (!getStop()) {
-                                 PatientEntity patientItem = patientData.getValue();
-                            patientService.patientUpdate(orgIdList, patientItem, ctx);
-                            } else {
-                                break;
-                            }
-                        }
-                        patientService.referenceEntry(new ReferencesEntity("End" + organizationId, "dum"));
-                        logger.info("End of processPatientData() method");
-                    }catch (IOException e) {
-                        e.printStackTrace();
+                        break;
                     }
                 }
+                patientService.referenceEntry(new ReferencesEntity("End" + organizationId, "dum"));
+                logger.info("End of processPatientData() method");
+            } catch (IOException e) {
+                e.printStackTrace();
             }
+        }
     }
 
     public void postOrganizationIfNeeded(Long organizationId) {
