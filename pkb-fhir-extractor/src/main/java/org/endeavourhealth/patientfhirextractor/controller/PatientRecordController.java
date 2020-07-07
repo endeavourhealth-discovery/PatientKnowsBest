@@ -86,7 +86,6 @@ public class PatientRecordController {
             patientService.referenceEntry(new ReferencesEntity("Start" + organizationId, "dum"));
             try {
                 FhirContext ctx = FhirContext.forDstu3();
-                // String json = null;
 
                 for (Map.Entry<Long, PatientEntity> patientData : patientEntities.entrySet()) {
                     if (!getStop()) {
