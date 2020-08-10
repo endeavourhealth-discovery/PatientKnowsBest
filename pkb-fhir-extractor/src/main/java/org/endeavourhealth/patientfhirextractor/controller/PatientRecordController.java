@@ -10,6 +10,7 @@ import org.endeavourhealth.patientfhirextractor.repository.PatientRepository;
 import org.endeavourhealth.patientfhirextractor.resource.MessageHeader;
 import org.endeavourhealth.patientfhirextractor.resource.Patient;
 import org.endeavourhealth.patientfhirextractor.service.CreateOrUpdateService;
+import org.endeavourhealth.patientfhirextractor.service.DeleteService;
 import org.endeavourhealth.patientfhirextractor.service.PatientService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,7 +42,8 @@ public class PatientRecordController {
     @Autowired
     PatientService patientService;
 
-    Map<Integer, List<String>> organizationQueue = new HashMap<>();
+    @Autowired
+    DeleteService deleteService;
 
     Patient patient;
     MessageHeader messageHeader;
@@ -101,6 +103,8 @@ public class PatientRecordController {
                 e.printStackTrace();
             }
         }
+        deleteService.deletePatients();
+
     }
 
     public void postOrganizationIfNeeded(Long organizationId) {

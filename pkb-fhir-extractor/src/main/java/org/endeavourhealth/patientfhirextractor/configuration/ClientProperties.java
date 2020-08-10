@@ -15,4 +15,5 @@ public class ClientProperties {
     String scope;
     String clientSecret;
     String grantType;
+    String token;
 }

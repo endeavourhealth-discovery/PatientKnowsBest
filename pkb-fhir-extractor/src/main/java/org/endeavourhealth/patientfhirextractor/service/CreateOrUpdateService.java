@@ -1,17 +1,11 @@
 package org.endeavourhealth.patientfhirextractor.service;
 
-import ca.uhn.fhir.context.FhirContext;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.endeavourhealth.patientfhirextractor.configuration.ClientProperties;
-import org.endeavourhealth.patientfhirextractor.constants.AvailableResources;
-import org.endeavourhealth.patientfhirextractor.data.PatientEntity;
-import org.endeavourhealth.patientfhirextractor.data.ReferencesEntity;
-import org.hl7.fhir.dstu3.model.Bundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -20,7 +14,6 @@ import org.springframework.web.client.RestTemplate;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceUnit;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 
 @Service
 public class CreateOrUpdateService {
@@ -57,7 +50,9 @@ public class CreateOrUpdateService {
             String result = restTemplate.postForObject(baseUrl, entity, String.class);
             ObjectMapper mapper = new ObjectMapper();
             Map<String, Object> jsonMap = mapper.readValue(result, Map.class);
-            return (String) jsonMap.get("access_token");
+            String token = (String) jsonMap.get("access_token");
+            clientProperties.setToken(token);
+            return token;
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }

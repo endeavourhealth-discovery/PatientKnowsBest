@@ -4,6 +4,7 @@ import ca.uhn.fhir.context.FhirContext;
 import org.apache.commons.lang3.StringUtils;
 import org.endeavourhealth.patientfhirextractor.configuration.ExporterProperties;
 import org.endeavourhealth.patientfhirextractor.constants.AvailableResources;
+import org.endeavourhealth.patientfhirextractor.data.DeleteEntity;
 import org.endeavourhealth.patientfhirextractor.data.PatientEntity;
 import org.endeavourhealth.patientfhirextractor.data.ReferencesEntity;
 import org.endeavourhealth.patientfhirextractor.resource.MessageHeader;
@@ -324,5 +325,25 @@ public class PatientService {
             session.close();
         }
         return organization_ids;
+    }
+
+    public List<DeleteEntity> getDeletePatientIds() {
+        logger.info("Entering getDeletePatientRow() big integer method");
+        Session session = null;
+
+        List<DeleteEntity> deleteEntityList = null;
+        String dbReferences = exporterProperties.getDbreferences();
+        try {
+            String sql = "select * from " + dbReferences + ".pkbDeletions where table_id=2";
+            session = entityManagerFactory.unwrap(SessionFactory.class).openSession();
+            Query q = session.createSQLQuery(sql).addEntity(DeleteEntity.class);
+            deleteEntityList =  q.getResultList();
+            logger.info("End of getDeletePatientIds() method");
+        } catch (Exception ex) {
+            logger.error("", ex.getCause());
+        } finally {
+            session.close();
+        }
+        return deleteEntityList;
     }
 }

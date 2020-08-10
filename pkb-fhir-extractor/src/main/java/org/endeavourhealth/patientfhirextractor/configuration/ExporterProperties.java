@@ -24,4 +24,5 @@ public class ExporterProperties {
     Integer testobs;
     String resendpats;
     Integer deletesdone;
+    String nominatedOrganization;
 }
