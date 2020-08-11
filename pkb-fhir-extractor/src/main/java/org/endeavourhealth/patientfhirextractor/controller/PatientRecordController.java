@@ -66,9 +66,10 @@ public class PatientRecordController {
     public void processPatientData(String queueId) throws Exception {
         logger.info("Entering processPatientData() method");
         Map<String, String> orgIdList = new HashMap<>();
+        //TODO: Token expiry should be handled after getting the correct error code from clients
         List<BigInteger> organizationIds = patientService.getQueueData(queueId);
         for (BigInteger organizationId : organizationIds) {
-            Map<Long, PatientEntity> patientEntities = patientService.processPatients(organizationId.longValue());
+           Map<Long, PatientEntity> patientEntities = patientService.processPatients(organizationId.longValue());
             Long patientOrganizationId = organizationId.longValue();
             if (CollectionUtils.isEmpty(patientEntities)) {
                 return;
@@ -98,12 +99,16 @@ public class PatientRecordController {
                     }
                 }
                 patientService.referenceEntry(new ReferencesEntity("End" + organizationId, "dum"));
+
+                if(organizationId.toString().equals(exporterProperties.getNominatedOrganization())) {
+                    deleteService.deletePatients();
+                }
                 logger.info("End of processPatientData() method");
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-        deleteService.deletePatients();
+
 
     }
 

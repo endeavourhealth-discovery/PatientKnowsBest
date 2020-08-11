@@ -4,7 +4,6 @@ import org.endeavourhealth.patientfhirextractor.configuration.ClientProperties;
 import org.endeavourhealth.patientfhirextractor.configuration.ExporterProperties;
 import org.endeavourhealth.patientfhirextractor.constants.AvailableResources;
 import org.endeavourhealth.patientfhirextractor.data.DeleteEntity;
-import org.endeavourhealth.patientfhirextractor.data.PatientEntity;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -18,9 +17,7 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceUnit;
-import java.math.BigInteger;
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class DeleteService {
@@ -65,22 +62,19 @@ public class DeleteService {
         logger.info("Entering deletePatient() method");
         final String baseUrl = clientProperties.getBaseUrl() + "Patient";
         try {
-           /* HttpHeaders headers = new HttpHeaders();
+            HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
             headers.setBearerAuth(clientProperties.getToken());
             HttpEntity entity = new HttpEntity(patientId, headers);
             RestTemplate restTemplate = new RestTemplate();
             String url = baseUrl + "/" + location;
             ResponseEntity<Object> response = restTemplate
-                    .exchange(url, HttpMethod.DELETE, entity, Object.class);*/
+                    .exchange(url, HttpMethod.DELETE, entity, Object.class);
 
-         //   if (response.getStatusCode().equals(204)) {
-             //   referencesService.saveReference(patientId, "DEL:" + patientResource, location, String.valueOf(response.getStatusCodeValue()), orgId, entityManagerFactory);
+           if (response.getStatusCode().equals(204)) {
+                referencesService.saveReference(patientId, "DEL:" + patientResource, location, String.valueOf(response.getStatusCodeValue()),"" , entityManagerFactory);
                 deletePatientId(patientId);
-          //  }
-
-
-
+           }
         } catch (Exception e) {
             logger.error("Problem in save or update" + e.getMessage());
         }
