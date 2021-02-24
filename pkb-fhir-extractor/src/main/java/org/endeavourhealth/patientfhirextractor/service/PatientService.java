@@ -23,10 +23,13 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceUnit;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @Service
 public class PatientService {
@@ -60,7 +63,7 @@ public class PatientService {
     }
 
     @Async
-    public void patientUpdate(Map<String, String> orgIdList,PatientEntity patientItem, FhirContext ctx) throws Exception {
+    public void patientUpdate(Map<String, String> orgIdList, PatientEntity patientItem, FhirContext ctx) throws Exception {
         logger.info("Entering patientUpdate() method");
         String patientOrgId = patientItem.getOrglocation();
         if (orgIdList.get(patientOrgId) == null) {
@@ -71,6 +74,7 @@ public class PatientService {
 
         Bundle bundle = new Bundle();
         bundle.setType(Bundle.BundleType.MESSAGE);
+        bundle.setId(UUID.randomUUID().toString());
 
         bundle.addEntry().setResource(messageHeader.getMessageHeader());
         org.hl7.fhir.dstu3.model.Patient patientResource = patient.getPatientResource(patientItem, patientLocation, this);
@@ -81,12 +85,30 @@ public class PatientService {
             update = true;
         }
         bundle.addEntry().setResource(patientResource);
-        String token = createOrUpdateService.getToken();
+        // String token = createOrUpdateService.getToken();
 
-        String json = ctx.newJsonParser().setPrettyPrint(true).encodeResourceToString(patientResource);
-        createOrUpdateService.createOrUpdatePatient(String.valueOf(patientItem.getId()), token, json, patientLocation, update, patientItem.getOrglocation());
-        logger.info("End of patientUpdate() method");
+        String json = ctx.newJsonParser().setPrettyPrint(true).encodeResourceToString(bundle);
+        // createOrUpdateService.createOrUpdatePatient(String.valueOf(patientItem.getId()), token, json, patientLocation, update, patientItem.getOrglocation());
+        logger.info("End of patientUpdate() method -->"  );
+        writetofile("C:\\Users\\prash\\LHS_NHS\\pkb_files\\fhir_message"+(count++)+".json",json);
+
     }
+    static int count=1;
+    private void writetofile(String filename,String text){
+     try
+
+    {
+        BufferedWriter out = new BufferedWriter(new FileWriter(filename));
+        out.write(text);
+        out.close();
+        logger.info("file created -->" +filename);
+    }
+      catch(  Exception e)
+    {
+     e.printStackTrace();
+    }
+
+}
 
     public void postOrganizationIfNeeded(Long organizationId) {
         logger.info("Entering postOrganizationIfNeeded() method");

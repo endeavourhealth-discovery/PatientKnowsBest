@@ -58,7 +58,7 @@ public class CreateOrUpdateService {
         }
         return null;
     }
-
+     //http://10.0.101.59:8080/procedure/cohort/start
     private void saveOrUpdatePatient(String patientId, String patientResource, String token, String location, boolean update, String orgId) {
         logger.info("Entering saveOrUpdatePatient() method");
         final String baseUrl = clientProperties.getBaseUrl() + "Patient";

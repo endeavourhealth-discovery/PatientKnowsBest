@@ -50,6 +50,7 @@ public class Patient implements ResourceConstants {
         coding.setSystem(META_SYSTEM);
         coding.setCode(ods_code);
         meta.setTag(Arrays.asList(coding));
+        patient.setMeta(meta);
 
 
         Identifier identifier = new Identifier();
@@ -63,7 +64,7 @@ public class Patient implements ResourceConstants {
         identifier.setExtension(Arrays.asList(extension));
         identifier.setValue(nhsNumber);
         identifier.setSystem(NHS_NUMBER_IDENTIFIER);
-        patient.addExtension(extension);
+        patient.addIdentifier(identifier);
 
         patient.addName()
                 .setFamily(lastname)
