@@ -85,12 +85,12 @@ public class PatientService {
             update = true;
         }
         bundle.addEntry().setResource(patientResource);
-        // String token = createOrUpdateService.getToken();
+        String token = createOrUpdateService.getToken();
 
         String json = ctx.newJsonParser().setPrettyPrint(true).encodeResourceToString(bundle);
-        // createOrUpdateService.createOrUpdatePatient(String.valueOf(patientItem.getId()), token, json, patientLocation, update, patientItem.getOrglocation());
-        logger.info("End of patientUpdate() method -->"  );
-        writetofile("C:\\Users\\prash\\LHS_NHS\\pkb_files\\fhir_message"+(count++)+".json",json);
+         createOrUpdateService.createOrUpdatePatient(String.valueOf(patientItem.getId()), token, json, patientLocation, update, patientItem.getOrglocation());
+        logger.info("End of patientUpdate() method "  );
+      //  writetofile("C:\\Users\\prash\\LHS_NHS\\pkb_files\\fhir_message"+(count++)+".json",json);
 
     }
     static int count=1;

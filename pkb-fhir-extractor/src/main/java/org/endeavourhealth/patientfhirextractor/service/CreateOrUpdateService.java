@@ -38,13 +38,9 @@ public class CreateOrUpdateService {
         try {
             final String baseUrl = clientProperties.getTokenUrl();
             MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
-            map.add("client_id", clientProperties.getClientId());
-            map.add("client_secret", clientProperties.getClientSecret());
-            map.add("scope", clientProperties.getScope());
-            map.add("grant_type", clientProperties.getGrantType());
-
             HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+            headers.setBasicAuth(clientProperties.getUsername(),clientProperties.getPassword());
+
             HttpEntity entity = new HttpEntity(map, headers);
             RestTemplate restTemplate = new RestTemplate();
             String result = restTemplate.postForObject(baseUrl, entity, String.class);
@@ -61,23 +57,26 @@ public class CreateOrUpdateService {
      //http://10.0.101.59:8080/procedure/cohort/start
     private void saveOrUpdatePatient(String patientId, String patientResource, String token, String location, boolean update, String orgId) {
         logger.info("Entering saveOrUpdatePatient() method");
-        final String baseUrl = clientProperties.getBaseUrl() + "Patient";
+        final String baseUrl = clientProperties.getBaseUrl();
         try {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
+            headers.add("X-Org-Public-Id","2851ea3a-d3b7-44ab-9221-ba6e40342539");
             headers.setBearerAuth(token);
             HttpEntity entity = new HttpEntity(patientResource, headers);
             RestTemplate restTemplate = new RestTemplate();
-            String url = update ? baseUrl + "/" + location : baseUrl;
-            ResponseEntity<Object> response = restTemplate
-                    .exchange(url, update ? HttpMethod.PUT : HttpMethod.POST, entity, Object.class);
-
-            if (update) {
-                referencesService.updateReference(String.valueOf(response.getStatusCodeValue()), patientResource, patientId,  entityManagerFactory);
-            } else {
-                referencesService.saveReference(patientId, patientResource, location, String.valueOf(response.getStatusCodeValue()), orgId, entityManagerFactory);
-            }
-
+            //String url = update ? baseUrl + "/" + location : baseUrl;
+            String url =  baseUrl;
+           // ResponseEntity<Object> response = restTemplate
+                  //  .exchange(url, update ? HttpMethod.PUT : HttpMethod.POST, entity, Object.class);
+             ResponseEntity<Object> response = restTemplate
+             .exchange(url, HttpMethod.POST, entity, Object.class);
+           // if (update) {
+              //  referencesService.updateReference(String.valueOf(response.getStatusCodeValue()), patientResource, patientId,  entityManagerFactory);
+           // } else {
+               referencesService.saveReference(patientId, patientResource, location, String.valueOf(response.getStatusCodeValue()), orgId, entityManagerFactory);
+          //  }
+            logger.info(response.getStatusCode().toString());
         } catch (Exception e) {
             logger.error("Problem in save or update" + e.getMessage());
         }

@@ -9,11 +9,9 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties("config")
 public class ClientProperties {
 
-    String clientId;
+    String username;
     String baseUrl;
     String tokenUrl;
-    String scope;
-    String clientSecret;
-    String grantType;
+    String password;
     String token;
 }
